@@ -280,13 +280,24 @@ exports.sendDeleteAccountOtp = async (req, res) => {
       expiresAt: otpExpires
     });
 
+    // Save to MailLog as a fallback so user can check it in MongoDB Atlas if email fails
+    const MailLog = require('../models/MailLog');
+    await MailLog.create({
+      to: user.email,
+      subject: 'Super Market - Permanent Account Deletion OTP',
+      body: `Hello ${user.name},\n\nYour account deletion OTP code is: ${otp}`
+    });
+
     const nodemailer = require('nodemailer');
     const transporter = nodemailer.createTransport({
       service: 'gmail',
       auth: {
         user: emailUser,
         pass: cleanedPass
-      }
+      },
+      connectionTimeout: 5000,
+      greetingTimeout: 5000,
+      socketTimeout: 5000
     });
 
     const mailOptions = {
