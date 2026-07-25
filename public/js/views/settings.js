@@ -260,3 +260,30 @@ async function triggerDatabaseReset() {
     }
   }
 }
+
+// Permanently Delete Owner Account
+async function triggerAccountDeletion() {
+  if (confirm('CRITICAL WARNING: You are about to PERMANENTLY DELETE your account. This will completely drop your database, delete your user credentials, delete all cashier worker profiles, remove all sales logs, and erase your brand files. THIS ACTION IS ENTIRELY IRREVERSIBLE. Are you absolutely sure you want to proceed?')) {
+    const password = prompt('To confirm permanent account deletion, please enter your password:');
+    if (!password) {
+      showToast('Account deletion cancelled.', 'info');
+      return;
+    }
+
+    try {
+      await API.settings.deleteAccount(password);
+      showToast('Your account and store data have been permanently deleted! Logging out...', 'success');
+      
+      // Clear local authentication state
+      localStorage.removeItem('token');
+      sessionStorage.removeItem('token');
+      localStorage.removeItem('rememberMe');
+      
+      setTimeout(() => {
+        window.location.reload();
+      }, 2000);
+    } catch (err) {
+      showToast(err.message || 'Failed to delete account', 'error');
+    }
+  }
+}

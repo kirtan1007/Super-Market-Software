@@ -231,3 +231,90 @@ exports.resetStoreData = async (req, res) => {
   }
 };
 
+// @desc    Permanently delete owner account and all associated tenant data
+// @route   POST /api/settings/delete-account
+// @access  Private (Owner Only)
+exports.deleteOwnerAccount = async (req, res) => {
+  try {
+    const { password } = req.body;
+    if (!password) {
+      return res.status(400).json({ success: false, message: 'Password is required to confirm account deletion' });
+    }
+
+    // Verify owner's password
+    const user = await User.findById(req.user._id).select('+password');
+    const isMatch = await user.matchPassword(password);
+    if (!isMatch) {
+      return res.status(401).json({ success: false, message: 'Invalid password. Account deletion cancelled.' });
+    }
+
+    const ownerId = req.user._id;
+
+    // 1. Delete uploaded files recursively
+    const settings = await Setting.findOne({ owner: ownerId });
+    if (settings) {
+      if (settings.shopLogo && settings.shopLogo.startsWith('/uploads/')) {
+        const logoPath = path.join(__dirname, '..', 'public', settings.shopLogo);
+        if (fs.existsSync(logoPath)) {
+          fs.unlinkSync(logoPath);
+        }
+      }
+      if (settings.upiQrImage && settings.upiQrImage.startsWith('/uploads/')) {
+        const qrPath = path.join(__dirname, '..', 'public', settings.upiQrImage);
+        if (fs.existsSync(qrPath)) {
+          fs.unlinkSync(qrPath);
+        }
+      }
+    }
+
+    // Delete the entire owner uploads directory if it exists
+    const ownerIdStr = ownerId.toString();
+    const ownerUploadsDir = path.join(__dirname, '..', 'public', 'uploads', 'owners', ownerIdStr);
+    if (fs.existsSync(ownerUploadsDir)) {
+      fs.rmSync(ownerUploadsDir, { recursive: true, force: true });
+    }
+
+    // 2. Drop the tenant-scoped database
+    if (req.databaseName) {
+      await mongoose.connection.useDb(req.databaseName).dropDatabase();
+    }
+
+    // 3. Find all workers under this owner
+    const workers = await User.find({ ownerId });
+    const workerIds = workers.map(w => w._id);
+    const allUserIds = [ownerId, ...workerIds];
+
+    // 4. Delete login history for owner and workers
+    const LoginHistory = require('../models/LoginHistory');
+    await LoginHistory.deleteMany({ user: { $in: allUserIds } });
+
+    // 5. Delete OTP verifications for owner and workers
+    const OtpVerification = require('../models/OtpVerification');
+    const emails = [req.user.email, ...workers.map(w => w.email).filter(Boolean)];
+    await OtpVerification.deleteMany({ email: { $in: emails } });
+
+    // 6. Delete all payment requests for this owner
+    const PaymentRequest = require('../models/PaymentRequest');
+    await PaymentRequest.deleteMany({ ownerId });
+
+    // 7. Delete settings associated with the owner (globally if any, and tenant proxy cache)
+    await Setting.deleteMany({ owner: ownerId });
+
+    // 8. Delete workers themselves (excluding the owner)
+    await User.deleteMany({ ownerId, role: { $ne: 'owner' } });
+
+    // 9. Delete activity logs for owner and workers
+    await ActivityLog.deleteMany({ user: { $in: allUserIds } });
+
+    // 10. Delete the Owner User account itself from database
+    await User.deleteOne({ _id: ownerId });
+
+    res.status(200).json({
+      success: true,
+      message: 'Your account and all associated store data have been permanently deleted.'
+    });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+
