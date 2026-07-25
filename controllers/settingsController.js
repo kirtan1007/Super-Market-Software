@@ -412,6 +412,7 @@ exports.deleteOwnerAccount = async (req, res) => {
     await LoginHistory.deleteMany({ user: { $in: allUserIds } });
 
     // 5. Delete OTP verifications for owner and workers
+    const OtpVerification = require('../models/OtpVerification');
     await OtpVerification.deleteMany({ email: { $in: [user.email, ...workers.map(w => w.email).filter(Boolean)] } });
 
     // 6. Delete all payment requests for this owner
