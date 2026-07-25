@@ -194,9 +194,18 @@ exports.resetStoreData = async (req, res) => {
       }
     }
 
-    // 2. Drop the tenant-scoped database
+    // 2. Drop the tenant-scoped database (with collection-clearing fallback if permissions are restricted)
     if (req.databaseName) {
-      await mongoose.connection.useDb(req.databaseName).dropDatabase();
+      try {
+        await mongoose.connection.useDb(req.databaseName).dropDatabase();
+      } catch (dbErr) {
+        console.warn(`dropDatabase failed: ${dbErr.message}. Clearing all collections as fallback.`);
+        const tenantDb = mongoose.connection.useDb(req.databaseName);
+        const collections = await tenantDb.db.listCollections().toArray();
+        for (const col of collections) {
+          await tenantDb.collection(col.name).deleteMany({});
+        }
+      }
     }
 
     // 3. Find all workers under this owner
@@ -379,9 +388,18 @@ exports.deleteOwnerAccount = async (req, res) => {
       fs.rmSync(ownerUploadsDir, { recursive: true, force: true });
     }
 
-    // 2. Drop the tenant-scoped database
+    // 2. Drop the tenant-scoped database (with collection-clearing fallback if permissions are restricted)
     if (req.databaseName) {
-      await mongoose.connection.useDb(req.databaseName).dropDatabase();
+      try {
+        await mongoose.connection.useDb(req.databaseName).dropDatabase();
+      } catch (dbErr) {
+        console.warn(`dropDatabase failed: ${dbErr.message}. Clearing all collections as fallback.`);
+        const tenantDb = mongoose.connection.useDb(req.databaseName);
+        const collections = await tenantDb.db.listCollections().toArray();
+        for (const col of collections) {
+          await tenantDb.collection(col.name).deleteMany({});
+        }
+      }
     }
 
     // 3. Find all workers under this owner
