@@ -5,7 +5,7 @@ const ensureSuperAdmin = async () => {
   try {
     const adminUsername = process.env.ADMIN_DEFAULT_USER || 'kirtan_panchal';
     const adminPassword = process.env.ADMIN_DEFAULT_PASS || 'kirtan_panchal';
-    const adminEmail = process.env.ADMIN_DEFAULT_EMAIL || 'kirtanpanchal2006@gmail.com';
+    const adminEmail = process.env.ADMIN_DEFAULT_EMAIL || 'superadmin@supermarket.com';
 
     let superadmin = await User.findOne({ role: 'superadmin' });
     if (!superadmin) {
