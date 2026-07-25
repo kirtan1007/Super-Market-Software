@@ -1,0 +1,103 @@
+{
+  "info": {
+    "_postman_id": "84824da5-67c4-42f0-a192-d6cb077d853e",
+    "name": "Super Market Software - Forgot Password OTP Collection",
+    "description": "API collection for verifying Send OTP, Verify OTP, and Reset Password flow.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Send OTP Code",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n    \"email\": \"owner@supermarket.com\"\n}"
+        },
+        "url": {
+          "raw": "http://localhost:5000/api/auth/send-otp",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "5000",
+          "path": [
+            "api",
+            "auth",
+            "send-otp"
+          ]
+        },
+        "description": "Sends a secure 6-digit OTP code to the user's registered email using Nodemailer."
+      },
+      "response": []
+    },
+    {
+      "name": "Verify OTP Code",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n    \"email\": \"owner@supermarket.com\",\n    \"otp\": \"123456\"\n}"
+        },
+        "url": {
+          "raw": "http://localhost:5000/api/auth/verify-otp",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "5000",
+          "path": [
+            "api",
+            "auth",
+            "verify-otp"
+          ]
+        },
+        "description": "Verifies the 6-digit OTP code against the hashed database entry. Maximum 5 attempts allowed."
+      },
+      "response": []
+    },
+    {
+      "name": "Reset Password",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n    \"email\": \"owner@supermarket.com\",\n    \"newPassword\": \"NewPassword123\",\n    \"confirmPassword\": \"NewPassword123\"\n}"
+        },
+        "url": {
+          "raw": "http://localhost:5000/api/auth/reset-password",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "5000",
+          "path": [
+            "api",
+            "auth",
+            "reset-password"
+          ]
+        },
+        "description": "Resets user password after successful verification. Validates passwords match and meet length requirements."
+      },
+      "response": []
+    }
+  ]
+}

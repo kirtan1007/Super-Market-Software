@@ -1,0 +1,1960 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Super Market Management System</title>
+  <!-- Performance Resource Hints -->
+  <link rel="dns-prefetch" href="https://fonts.googleapis.com">
+  <link rel="dns-prefetch" href="https://fonts.gstatic.com">
+  <link rel="dns-prefetch" href="https://cdnjs.cloudflare.com">
+  <link rel="dns-prefetch" href="https://cdn.jsdelivr.net">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <!-- FontAwesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <!-- ChartJS CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js" defer></script>
+  <!-- Custom Stylesheet -->
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <!-- System Notifications Container -->
+  <div id="notification-toast-container" class="toast-container"></div>
+
+  <!-- AUTHENTICATION WRAPPER -->
+  <div id="auth-container" class="auth-wrapper hidden">
+    <!-- Registration Screen (Owner Setup) -->
+    <div id="register-card" class="auth-card wide hidden">
+      <div class="auth-header">
+        <div class="logo-box">
+          <i class="fa-solid fa-cart-shopping brand-icon"></i>
+          <h1>Super Market Setup</h1>
+        </div>
+        <p>Create your Owner Administrator profile to initialize the database.</p>
+      </div>
+      <form id="register-form" class="auth-form grid-2">
+        <div class="form-group span-2">
+          <label><i class="fa-solid fa-shop"></i> Shop Name *</label>
+          <input type="text" id="reg-shop-name" placeholder="e.g. My Super Market" required>
+        </div>
+        <div class="form-group">
+          <label><i class="fa-solid fa-user-shield"></i> Owner Full Name *</label>
+          <input type="text" id="reg-owner-name" placeholder="e.g. John Doe" required>
+        </div>
+        <div class="form-group">
+          <label><i class="fa-solid fa-barcode"></i> GSTIN Number *</label>
+          <input type="text" id="reg-gst" placeholder="e.g. 22AAAAA0000A1Z5" required>
+        </div>
+        <div class="form-group">
+          <label><i class="fa-solid fa-envelope"></i> Email Address *</label>
+          <input type="email" id="reg-email" placeholder="owner@supermarket.com" required>
+        </div>
+        <div class="form-group">
+          <label><i class="fa-solid fa-phone"></i> Mobile Number *</label>
+          <input type="tel" id="reg-mobile" placeholder="9876543210" required>
+        </div>
+        <div class="form-group">
+          <label><i class="fa-solid fa-map-marker-alt"></i> Shop Address *</label>
+          <input type="text" id="reg-address" placeholder="123 Astro Lane, Super Market Sector" required>
+        </div>
+        <div class="form-group">
+          <label><i class="fa-solid fa-user"></i> Choose Username *</label>
+          <input type="text" id="reg-username" placeholder="owner" required>
+        </div>
+        <div class="form-group">
+          <label><i class="fa-solid fa-lock"></i> Password *</label>
+          <input type="password" id="reg-password" placeholder="••••••••" required>
+        </div>
+        <div class="form-group">
+          <label><i class="fa-solid fa-lock"></i> Confirm Password *</label>
+          <input type="password" id="reg-confirm-password" placeholder="••••••••" required>
+        </div>
+        <div class="form-group span-2">
+          <label><i class="fa-solid fa-circle-question"></i> Security Question 1 *</label>
+          <select id="reg-q1" required>
+            <option value="What is your birth city?">What is your birth city?</option>
+            <option value="What is your favorite color?">What is your favorite color?</option>
+            <option value="What was the name of your first pet?">What was the name of your first pet?</option>
+          </select>
+          <input type="text" id="reg-a1" placeholder="Your Answer" required style="margin-top: 6px;">
+        </div>
+        <div class="form-group span-2">
+          <label><i class="fa-solid fa-circle-question"></i> Security Question 2 *</label>
+          <select id="reg-q2" required>
+            <option value="What is your favorite book?">What is your favorite book?</option>
+            <option value="What was the name of your high school?">What was the name of your high school?</option>
+            <option value="What is your mother's maiden name?">What is your mother's maiden name?</option>
+          </select>
+          <input type="text" id="reg-a2" placeholder="Your Answer" required style="margin-top: 6px;">
+        </div>
+        <button type="submit" class="btn-primary span-2"><i class="fa-solid fa-circle-check"></i> Register & Initialize</button>
+        <button type="button" class="btn-text span-2" onclick="navigateSPA('login')" style="margin-top: 10px; justify-content: center;"><i class="fa-solid fa-arrow-left"></i> Already initialized? Back to Login</button>
+      </form>
+    </div>
+
+    <!-- Login Screen -->
+    <div id="login-card" class="auth-card">
+      <div class="auth-header">
+        <div class="logo-box">
+          <img id="login-logo-img" class="brand-logo-img hidden" alt="Shop Logo" style="width: 60px; height: 60px; object-fit: contain; margin-bottom: 10px; border-radius: 8px; background: #fff; padding: 4px;">
+          <i id="login-logo-icon" class="fa-solid fa-cart-shopping brand-icon"></i>
+          <h1 id="login-shop-title">Super Market</h1>
+        </div>
+        <p>Sign in to access Billing & Inventory Management</p>
+      </div>
+      <form id="login-form" class="auth-form">
+        <div class="form-group">
+          <label><i class="fa-solid fa-user"></i> Username</label>
+          <input type="text" id="login-username" placeholder="Enter username" required autocomplete="username">
+        </div>
+        <div class="form-group">
+          <label><i class="fa-solid fa-lock"></i> Password</label>
+          <div class="password-input-wrapper">
+            <input type="password" id="login-password" placeholder="Enter password" required autocomplete="current-password">
+            <button type="button" class="toggle-password-btn" onclick="togglePasswordVisibility('login-password')">
+              <i class="fa-solid fa-eye" id="login-password-eye"></i>
+            </button>
+          </div>
+        </div>
+        <div class="auth-options">
+          <label class="checkbox-container">
+            <input type="checkbox" id="login-remember">
+            <span class="checkmark"></span>
+            Remember Me
+          </label>
+          <a href="javascript:void(0)" class="forgot-link" onclick="showForgotPasswordFlow()">Forgot Password?</a>
+        </div>
+        <button type="submit" class="btn-primary"><i class="fa-solid fa-sign-in-alt"></i> Login Securely</button>
+        <div class="text-center mt-3" id="login-setup-link-wrapper">
+          <a href="javascript:void(0)" onclick="navigateSPA('register', true)" style="font-size: 0.85rem;"><i class="fa-solid fa-user-plus"></i> Create New Account</a>
+        </div>
+      </form>
+    </div>
+
+    <!-- Forgot Password Modal Flow -->
+    <div id="forgot-card" class="auth-card hidden">
+      <div class="auth-header">
+        <h2>Recover Password</h2>
+        <p id="forgot-step-text">Step 1: Verify Username & Registered Email</p>
+      </div>
+      
+      <!-- Premium progress bar for flow steps -->
+      <div style="background: rgba(255,255,255,0.05); height: 4px; border-radius: 2px; margin-bottom: 20px; overflow: hidden;">
+        <div id="forgot-progress-fill" style="background: var(--neon-blue); height: 100%; width: 33.3%; transition: width 0.3s ease;"></div>
+      </div>
+
+      <div class="auth-form">
+        <!-- Step 1: Enter Username & Email -->
+        <div id="forgot-step-email" class="forgot-step">
+          <div class="form-group">
+            <label><i class="fa-solid fa-user"></i> Registered Username *</label>
+            <input type="text" id="forgot-username" placeholder="Enter registered username" required>
+          </div>
+          <div class="form-group">
+            <label><i class="fa-solid fa-envelope"></i> Registered Email Address *</label>
+            <input type="email" id="forgot-email" placeholder="owner@supermarket.com" required>
+          </div>
+          <button type="button" class="btn-primary w-full" id="btn-send-otp" onclick="handleSendOtp()"><i class="fa-solid fa-paper-plane"></i> Send OTP Code</button>
+        </div>
+
+        <!-- Step 2: Verify 6-digit OTP -->
+        <div id="forgot-step-otp" class="forgot-step hidden">
+          <div class="form-group align-center">
+            <label class="text-center w-full" style="justify-content: center; margin-bottom: 8px;"><i class="fa-solid fa-shield-halved"></i> Enter 6-Digit Verification Code</label>
+            
+            <!-- 6 discrete OTP boxes -->
+            <div class="otp-input-container">
+              <input type="text" class="otp-box" maxlength="1" oninput="hopOtpInput(this, 0)" id="otp-digit-0" autocomplete="off" pattern="[0-9]*" inputmode="numeric">
+              <input type="text" class="otp-box" maxlength="1" oninput="hopOtpInput(this, 1)" id="otp-digit-1" autocomplete="off" pattern="[0-9]*" inputmode="numeric">
+              <input type="text" class="otp-box" maxlength="1" oninput="hopOtpInput(this, 2)" id="otp-digit-2" autocomplete="off" pattern="[0-9]*" inputmode="numeric">
+              <input type="text" class="otp-box" maxlength="1" oninput="hopOtpInput(this, 3)" id="otp-digit-3" autocomplete="off" pattern="[0-9]*" inputmode="numeric">
+              <input type="text" class="otp-box" maxlength="1" oninput="hopOtpInput(this, 4)" id="otp-digit-4" autocomplete="off" pattern="[0-9]*" inputmode="numeric">
+              <input type="text" class="otp-box" maxlength="1" oninput="hopOtpInput(this, 5)" id="otp-digit-5" autocomplete="off" pattern="[0-9]*" inputmode="numeric">
+            </div>
+          </div>
+          
+          <!-- Countdown and Resend block -->
+          <div style="display: flex; flex-direction: column; align-items: center; margin-top: 15px; font-size: 0.85em;">
+            <div>
+              <span class="text-muted">OTP expires in: </span><strong id="otp-timer-countdown" class="text-neon-pink">05:00</strong>
+            </div>
+            <div style="margin-top: 5px;">
+              <button type="button" class="btn-text" id="btn-resend-otp" onclick="handleResendOtp()" disabled style="color: var(--text-muted); cursor: not-allowed; font-size: 0.85em;">Resend OTP (60s)</button>
+            </div>
+          </div>
+
+          <button type="button" class="btn-primary w-full mt-3" id="btn-verify-otp" onclick="handleVerifyOtp()"><i class="fa-solid fa-lock-open"></i> Verify OTP Code</button>
+        </div>
+
+        <!-- Step 3: Enter New Passcode & Confirm -->
+        <div id="forgot-step-reset" class="forgot-step hidden">
+          <div class="form-group">
+            <label><i class="fa-solid fa-lock"></i> Choose New Password (min. 6 chars) *</label>
+            <div class="password-input-wrapper">
+              <input type="password" id="forgot-new-pwd" placeholder="Enter new password" required>
+              <button type="button" class="toggle-password-btn" onclick="togglePasswordVisibility('forgot-new-pwd')">
+                <i class="fa-solid fa-eye" id="forgot-new-pwd-eye"></i>
+              </button>
+            </div>
+          </div>
+          <div class="form-group">
+            <label><i class="fa-solid fa-key"></i> Confirm New Password *</label>
+            <div class="password-input-wrapper">
+              <input type="password" id="forgot-confirm-pwd" placeholder="Confirm password" required>
+              <button type="button" class="toggle-password-btn" onclick="togglePasswordVisibility('forgot-confirm-pwd')">
+                <i class="fa-solid fa-eye" id="forgot-confirm-pwd-eye"></i>
+              </button>
+            </div>
+          </div>
+          <button type="button" class="btn-primary w-full mt-3" id="btn-reset-password" onclick="handleResetPasswordSubmit()"><i class="fa-solid fa-circle-check"></i> Reset Password</button>
+        </div>
+
+        <!-- Loading spinner layout -->
+        <div id="forgot-loading-spinner" class="hidden" style="display: flex; flex-direction: column; align-items: center; justify-content: center; margin-top: 15px; margin-bottom: 10px;">
+          <div style="width: 32px; height: 32px; border: 3px solid rgba(0, 210, 255, 0.1); border-top-color: var(--neon-blue); border-radius: 50%; animation: fa-spin 1s linear infinite;"></div>
+          <p class="font-compact mt-2 text-neon-blue" style="font-size: 0.85em;">Sending secure transmission...</p>
+        </div>
+
+        <button type="button" class="btn-text" onclick="showLoginFlow()" style="margin-top: 12px; align-self: center;" id="btn-forgot-back-login"><i class="fa-solid fa-arrow-left"></i> Back to Login</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- APPLICATION WRAPPER (DASHBOARD FRAME) -->
+  <div id="app-container" class="app-layout hidden">
+    <!-- Sidebar Navigation -->
+    <aside class="sidebar">
+      <div class="sidebar-header">
+        <img id="sidebar-logo-img" class="sidebar-logo-img hidden" alt="Shop Logo">
+        <i class="fa-solid fa-cart-shopping sidebar-logo-icon" id="sidebar-logo-icon"></i>
+        <div class="logo-text">
+          <span class="logo-title" id="sidebar-shop-name">Super Market</span>
+        </div>
+      </div>
+      <nav class="sidebar-nav">
+        <ul>
+          <li>
+            <a href="#dashboard" class="nav-link active" onclick="navigateSPA('dashboard')">
+              <i class="fa-solid fa-chart-pie"></i> <span>Dashboard</span>
+            </a>
+          </li>
+          <li>
+            <a href="#billing" class="nav-link" onclick="navigateSPA('billing')">
+              <i class="fa-solid fa-cash-register"></i> <span>Billing Cart</span>
+            </a>
+          </li>
+          <li>
+            <a href="#products" class="nav-link" onclick="navigateSPA('products')">
+              <i class="fa-solid fa-box"></i> <span>Inventory Stock</span>
+            </a>
+          </li>
+          <li class="owner-only">
+            <a href="#purchases" class="nav-link" onclick="navigateSPA('purchases')">
+              <i class="fa-solid fa-truck-loading"></i> <span>Purchase Entry</span>
+            </a>
+          </li>
+          <li>
+            <a href="#customers" class="nav-link" onclick="navigateSPA('customers')">
+              <i class="fa-solid fa-users"></i> <span>Customers</span>
+            </a>
+          </li>
+          <li class="owner-only">
+            <a href="#suppliers" class="nav-link" onclick="navigateSPA('suppliers')">
+              <i class="fa-solid fa-truck"></i> <span>Suppliers</span>
+            </a>
+          </li>
+          <li class="owner-only">
+            <a href="#workers" class="nav-link" onclick="navigateSPA('workers')">
+              <i class="fa-solid fa-user-gear"></i> <span>Manage Staff</span>
+            </a>
+          </li>
+          <li class="owner-only">
+            <a href="#reports" class="nav-link" onclick="navigateSPA('reports')">
+              <i class="fa-solid fa-file-invoice-dollar"></i> <span>Reports & Margin</span>
+            </a>
+          </li>
+          <li class="owner-only">
+            <a href="#settings" class="nav-link" onclick="navigateSPA('settings')">
+              <i class="fa-solid fa-sliders"></i> <span>Settings</span>
+            </a>
+          </li>
+        </ul>
+      </nav>
+      <div class="sidebar-footer">
+        <div class="cashier-info">
+          <i class="fa-solid fa-circle-user cashier-avatar"></i>
+          <div>
+            <h4 id="user-display-name">Alex Cashier</h4>
+            <span id="user-display-role">Worker</span>
+          </div>
+        </div>
+        <button class="logout-btn" onclick="logoutSession()"><i class="fa-solid fa-right-from-bracket"></i> <span>Logout</span></button>
+      </div>
+    </aside>
+
+    <!-- Main Content Frame -->
+    <main class="main-frame">
+      <!-- Top Navbar -->
+      <header class="topbar">
+        <div class="breadcrumb">
+          <i class="fa-solid fa-shop"></i>
+          <span id="breadcrumb-parent">Super Market</span>
+          <i class="fa-solid fa-chevron-right separator"></i>
+          <span id="breadcrumb-active" class="active">Dashboard</span>
+        </div>
+        <div class="topbar-actions">
+          <!-- Network Status -->
+          <div class="network-badge online"><i class="fa-solid fa-circle-nodes"></i> Local Network Ready</div>
+          
+          <!-- Subscription Badge -->
+          <div id="header-subscription-badge" class="network-badge hidden" style="cursor: pointer;" onclick="navigateSPA('subscription')">
+            <i class="fa-solid fa-crown" id="header-subscription-icon"></i>
+            <span id="header-subscription-text">Subscription Active</span>
+          </div>
+          
+          <!-- Theme Toggler -->
+          <button class="icon-action-btn" onclick="toggleTheme()" title="Toggle Theme">
+            <i class="fa-solid fa-moon" id="theme-icon"></i>
+          </button>
+          
+          <!-- Alerts Bell -->
+          <div class="notification-bell-wrapper">
+            <button class="icon-action-btn" onclick="toggleAlertsDropdown()">
+              <i class="fa-solid fa-bell"></i>
+              <span id="alerts-count-badge" class="badge hidden">0</span>
+            </button>
+            <div id="alerts-dropdown" class="alerts-dropdown hidden">
+              <div class="alerts-hdr">
+                <h3>Expiry & Stock Notifications</h3>
+                <button onclick="clearSystemNotifications()" class="btn-text">Clear</button>
+              </div>
+              <div id="alerts-list-content" class="alerts-list">
+                <div class="no-alerts">No stock or expiry warnings.</div>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Keyboard Shortcut Hint -->
+          <button class="btn-kbd-help" onclick="openShortcutsModal()"><i class="fa-solid fa-keyboard"></i> Shortcuts (F1)</button>
+        </div>
+      </header>
+
+      <!-- VIEW CONTAINERS -->
+      <div class="content-body">
+        
+        <!-- DASHBOARD VIEW -->
+        <section id="view-dashboard" class="view-section">
+          <div class="dashboard-header flex-between mb-4 align-center" style="margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center;">
+            <div>
+              <h1 id="dashboard-shop-name" style="font-family: var(--font-title); font-size: 1.8rem; font-weight: 700; display: flex; align-items: center; gap: 12px;">
+                <img id="dashboard-logo-img" class="sidebar-logo-img hidden" alt="Shop Logo" style="width: 40px; height: 40px; border-radius: 8px;">
+                <i id="dashboard-logo-icon" class="fa-solid fa-shop text-neon-blue"></i>
+                <span id="dashboard-shop-title-text">Super Market</span>
+              </h1>
+              <p class="text-muted" style="margin-top: 4px;">Real-time store dashboard and live telemetry metrics.</p>
+            </div>
+          </div>
+          <div class="dashboard-cards">
+            <div class="card-stat glass-card border-neon-blue">
+              <div class="stat-icon bg-neon-blue-light"><i class="fa-solid fa-indian-rupee-sign text-neon-blue"></i></div>
+              <div class="stat-info">
+                <h3>Today's Sales</h3>
+                <p id="dash-sales-val">₹0.00</p>
+                <span class="stat-comparison">Compared to yesterday</span>
+              </div>
+            </div>
+            <div class="card-stat glass-card border-neon-green">
+              <div class="stat-icon bg-neon-green-light"><i class="fa-solid fa-sack-dollar text-neon-green"></i></div>
+              <div class="stat-info">
+                <h3>Today's Profit</h3>
+                <p id="dash-profit-val">₹0.00</p>
+                <span class="stat-comparison text-neon-green"><i class="fa-solid fa-circle-nodes"></i> Real-time calculation</span>
+              </div>
+            </div>
+            <div class="card-stat glass-card border-neon-pink">
+              <div class="stat-icon bg-neon-pink-light"><i class="fa-solid fa-basket-shopping text-neon-pink"></i></div>
+              <div class="stat-info">
+                <h3>Orders Processed</h3>
+                <p id="dash-orders-val">0</p>
+                <span class="stat-comparison">Completed checkouts</span>
+              </div>
+            </div>
+            <div class="card-stat glass-card border-neon-yellow">
+              <div class="stat-icon bg-neon-yellow-light"><i class="fa-solid fa-warning text-neon-yellow"></i></div>
+              <div class="stat-info">
+                <h3>Critical Alerts</h3>
+                <p id="dash-alerts-val">0 Items</p>
+                <span class="stat-comparison text-neon-yellow"><span id="dash-low-stock">0 Low</span> | <span id="dash-out-stock">0 Out</span></span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Product Expiry Live Alert Monitor -->
+          <div class="card-title mt-4">
+            <h3 style="font-size: 1.1rem; font-weight: 600;"><i class="fa-solid fa-hourglass-empty text-neon-pink"></i> Live Product Expiry Tracker</h3>
+            <p style="font-size: 0.8rem; color: var(--text-muted);">Real-time inventory scanning & batch expiry monitoring</p>
+          </div>
+          <div class="dashboard-cards mt-2">
+            <div class="card-stat glass-card" style="border-bottom: 3px solid #8b0000; box-shadow: 0 4px 15px rgba(139, 0, 0, 0.1);">
+              <div class="stat-icon" style="background: rgba(139, 0, 0, 0.15);"><i class="fa-solid fa-skull-crossbones" style="color: #ff3333;"></i></div>
+              <div class="stat-info">
+                <h3>Expired</h3>
+                <p id="dash-exp-expired" style="color: #ff5555;">0</p>
+                <span class="stat-comparison" style="color: #ff5555;">Deducted & moved to Expired Stock</span>
+              </div>
+            </div>
+            <div class="card-stat glass-card" style="border-bottom: 3px solid #ff3333; box-shadow: 0 4px 15px rgba(255, 51, 51, 0.1);">
+              <div class="stat-icon" style="background: rgba(255, 51, 51, 0.15);"><i class="fa-solid fa-circle-exclamation" style="color: #ff3333;"></i></div>
+              <div class="stat-info">
+                <h3>Expiring Today</h3>
+                <p id="dash-exp-today" style="color: #ff5555;">0</p>
+                <span class="stat-comparison" style="color: #ff5555;">Critical - Blocked on checkout</span>
+              </div>
+            </div>
+            <div class="card-stat glass-card" style="border-bottom: 3px solid #ff8c00; box-shadow: 0 4px 15px rgba(255, 140, 0, 0.1);">
+              <div class="stat-icon" style="background: rgba(255, 140, 0, 0.15);"><i class="fa-solid fa-triangle-exclamation" style="color: #ff8c00;"></i></div>
+              <div class="stat-info">
+                <h3>Expiring In 7 Days</h3>
+                <p id="dash-exp-7days" style="color: #ff8c00;">0</p>
+                <span class="stat-comparison" style="color: #ff8c00;">Manager approval required</span>
+              </div>
+            </div>
+            <div class="card-stat glass-card" style="border-bottom: 3px solid #ffd700; box-shadow: 0 4px 15px rgba(255, 215, 0, 0.1);">
+              <div class="stat-icon" style="background: rgba(255, 215, 0, 0.15);"><i class="fa-solid fa-bell" style="color: #ffd700;"></i></div>
+              <div class="stat-info">
+                <h3>Expiring In 15 Days</h3>
+                <p id="dash-exp-15days" style="color: #ffd700;">0</p>
+                <span class="stat-comparison">15 days remaining</span>
+              </div>
+            </div>
+            <div class="card-stat glass-card" style="border-bottom: 3px solid #00cc66; box-shadow: 0 4px 15px rgba(0, 204, 102, 0.1);">
+              <div class="stat-icon" style="background: rgba(0, 204, 102, 0.15);"><i class="fa-solid fa-calendar-days" style="color: #00cc66;"></i></div>
+              <div class="stat-info">
+                <h3>Expiring In 30 Days</h3>
+                <p id="dash-exp-30days" style="color: #00cc66;">0</p>
+                <span class="stat-comparison">30 days remaining</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Charts Section -->
+          <div class="dashboard-graphs grid-2 mt-4">
+            <div class="glass-card p-4">
+              <div class="card-title">
+                <h3>Weekly Performance Trend</h3>
+                <p>Daily Sales & Profit Analysis</p>
+              </div>
+              <div class="chart-container">
+                <canvas id="salesWeeklyChart"></canvas>
+              </div>
+            </div>
+            <div class="glass-card p-4">
+              <div class="card-title">
+                <h3>Product Category Distribution</h3>
+                <p>Sales volume by category shares</p>
+              </div>
+              <div class="chart-container">
+                <canvas id="categorySharesChart"></canvas>
+              </div>
+            </div>
+          </div>
+
+          <!-- Recent Activity grid -->
+          <div class="grid-2 mt-4">
+            <div class="glass-card p-4">
+              <div class="card-title flex-between">
+                <h3>Recent Sales Invoices</h3>
+                <a href="#billing" onclick="navigateSPA('billing')" class="btn-text">New Bill</a>
+              </div>
+              <div class="table-responsive">
+                <table class="data-table">
+                  <thead>
+                    <tr>
+                      <th>Invoice No</th>
+                      <th>Customer</th>
+                      <th>Mode</th>
+                      <th>Total</th>
+                      <th>Time</th>
+                    </tr>
+                  </thead>
+                  <tbody id="dash-recent-sales">
+                    <tr><td colspan="5" class="text-center">No recent orders logged.</td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+            <div class="glass-card p-4">
+              <div class="card-title">
+                <h3>Low Inventory warnings</h3>
+              </div>
+              <div class="table-responsive">
+                <table class="data-table">
+                  <thead>
+                    <tr>
+                      <th>Product</th>
+                      <th>Barcode (EAN-13)</th>
+                      <th>Rack No</th>
+                      <th>In Stock</th>
+                    </tr>
+                  </thead>
+                  <tbody id="dash-low-inventory-list">
+                    <tr><td colspan="4" class="text-center">Inventory levels healthy.</td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- BILLING CART VIEW -->
+        <section id="view-billing" class="view-section hidden">
+          <div class="billing-grid">
+            <!-- Left Side: Product Scanner & Cart table -->
+            <div class="billing-left glass-card">
+              <div class="cart-scanner-bar flex-between">
+                <!-- Product SKU scan input -->
+                <div class="scanner-input-container">
+                  <i class="fa-solid fa-barcode barcode-search-icon"></i>
+                  <input type="text" id="bill-barcode-input" placeholder="Scan Barcode (USB Scanner) or Enter SKU..." autocomplete="off">
+                </div>
+                <!-- Manual product name search -->
+                <div class="search-input-container">
+                  <i class="fa-solid fa-search"></i>
+                  <input type="text" id="bill-name-search" placeholder="Type Product Name..." autocomplete="off">
+                  <div id="bill-search-results" class="search-results-dropdown hidden"></div>
+                </div>
+              </div>
+
+              <!-- Cart Items Table -->
+              <div class="cart-items-table-wrapper">
+                <table class="data-table font-compact">
+                  <thead>
+                    <tr>
+                      <th width="5%">#</th>
+                      <th width="35%">Product</th>
+                      <th width="15%">MRP (₹)</th>
+                      <th width="15%">Rate (₹)</th>
+                      <th width="15%">Qty</th>
+                      <th width="10%">Discount</th>
+                      <th width="10%">Total (₹)</th>
+                      <th width="5%"></th>
+                    </tr>
+                  </thead>
+                  <tbody id="cart-tbody">
+                    <tr class="cart-empty-row">
+                      <td colspan="8" class="text-center p-5">
+                        <div class="empty-cart-state">
+                          <i class="fa-solid fa-basket-shopping text-muted"></i>
+                          <p>Scanner Active. Scan item or search to start billing.</p>
+                        </div>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+
+              <!-- Keyboard Shortcuts Guide footer -->
+              <div class="billing-footer-keys">
+                <span><kbd>F2</kbd> Focus Barcode</span>
+                <span><kbd>F4</kbd> Search Name</span>
+                <span><kbd>F8</kbd> Cash Out</span>
+                <span><kbd>F9</kbd> UPI Out</span>
+                <span><kbd>Esc</kbd> Reset Cart</span>
+              </div>
+            </div>
+
+            <!-- Right Side: Invoice Customer & Total checkout card -->
+            <div class="billing-right">
+              <!-- Customer loyalty info -->
+              <div class="glass-card p-4 mb-4" style="position: relative;">
+                <h4 class="section-title"><i class="fa-solid fa-user-tag text-neon-blue"></i> Customer Loyalty Profile</h4>
+                
+                <!-- Search Autocomplete Input -->
+                <div id="bill-customer-search-group" class="form-group mt-3" style="position: relative;">
+                  <label>Search Customer (Name or Mobile) *</label>
+                  <input type="text" id="bill-customer-search" placeholder="Type name or mobile..." autocomplete="off">
+                  <div id="bill-customer-search-results" class="search-results-dropdown hidden"></div>
+                </div>
+
+                <!-- Hidden inputs to satisfy existing billing logic -->
+                <input type="hidden" id="bill-customer-mobile" value="">
+                <input type="hidden" id="bill-customer-name" value="">
+
+                <!-- Selected Customer Profile Details Card -->
+                <div id="bill-customer-selected-details" class="selected-profile-box mt-3 hidden" style="background: rgba(255, 255, 255, 0.02); border: 1px solid var(--glass-border); border-radius: 12px; padding: 16px; display: flex; flex-direction: column; gap: 8px;">
+                  <div class="flex-row justify-between align-center">
+                    <div>
+                      <h3 id="sel-cust-name-val" class="m-0 text-neon-blue" style="font-size: 1.15rem;">-</h3>
+                      <p id="sel-cust-mobile-val" class="m-0 text-muted" style="font-size: 0.85rem; font-weight: 500;">-</p>
+                    </div>
+                    <button type="button" class="btn-text" onclick="clearSelectedCustomer()" style="color: var(--neon-pink); border: none; background: transparent; cursor: pointer; display: flex; align-items: center; gap: 4px; font-weight: 600;"><i class="fa-solid fa-user-minus"></i> Remove</button>
+                  </div>
+                  
+                  <div class="grid-2 mt-2 pt-2 border-top-dash" style="font-size: 0.85rem; gap: 10px 15px; color: var(--text-muted);">
+                    <div>Email: <strong id="sel-cust-email-val" class="text-white">-</strong></div>
+                    <div>Address: <strong id="sel-cust-address-val" class="text-white">-</strong></div>
+                    <div>Loyalty Points: <strong id="sel-cust-points-val" class="text-neon-green">0</strong></div>
+                    <div>Visits Count: <strong id="sel-cust-visits-val" class="text-white">0</strong></div>
+                    <div class="span-2">Last Purchase: <strong id="sel-cust-last-date-val" class="text-white">-</strong></div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Cart totals -->
+              <div class="glass-card p-4 flex-col checkout-summary-card">
+                <h3 class="checkout-hdr">Cart Checkout</h3>
+                
+                <div class="bill-calc-row mt-3">
+                  <span>Subtotal:</span>
+                  <strong id="bill-subtotal">₹0.00</strong>
+                </div>
+                <div class="bill-calc-row">
+                  <span>GST Taxes included:</span>
+                  <span id="bill-gst-amount">₹0.00</span>
+                </div>
+                <div class="bill-calc-row">
+                  <span>Cart Discounts:</span>
+                  <span id="bill-discount-amount" class="text-neon-pink">-₹0.00</span>
+                </div>
+                <div class="bill-calc-row border-top-dash pt-3">
+                  <span>Net Payable Amount:</span>
+                  <strong id="bill-final-amount" class="text-huge text-neon-green">₹0.00</strong>
+                </div>
+
+                <div class="form-group mt-3">
+                  <label>Overall Discount (%)</label>
+                  <input type="number" id="bill-overall-discount" value="0" min="0" max="90" onchange="calculateCartTotals()">
+                </div>
+                
+                <div class="form-group">
+                  <label>Coupon Code</label>
+                  <input type="text" id="bill-coupon" placeholder="Enter coupon" oninput="calculateCartTotals()">
+                </div>
+
+                <div class="checkout-buttons mt-4 flex-col">
+                  <button class="btn-success btn-checkout" onclick="openPaymentModal()"><i class="fa-solid fa-credit-card"></i> Proceed to Checkout</button>
+                  <button class="btn-danger btn-reset-cart mt-2" onclick="resetBillingCart()"><i class="fa-solid fa-trash-can"></i> Clear Cart</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- INVENTORY PRODUCTS VIEW -->
+        <section id="view-products" class="view-section hidden">
+          <div class="glass-card p-4">
+            <div class="flex-between flex-wrap gap-2">
+              <h2>Inventory Product Directory</h2>
+              <div class="flex-row gap-2">
+                <button class="btn-danger owner-only" onclick="triggerRegenerateBarcodes()"><i class="fa-solid fa-arrows-rotate"></i> Regenerate EAN-13</button>
+                <button class="btn-primary owner-only" onclick="openProductModal()"><i class="fa-solid fa-plus"></i> Add Product</button>
+                <button class="btn-secondary owner-only" onclick="openCsvModal()"><i class="fa-solid fa-file-import"></i> CSV Import</button>
+              </div>
+            </div>
+
+            <div class="filters-bar mt-4">
+              <input type="text" id="prod-filter-search" placeholder="Search by name, barcode or brand...">
+              <input type="text" id="prod-filter-batch" placeholder="Filter by Batch...">
+              <input type="text" id="prod-filter-supplier" placeholder="Filter by Supplier...">
+              <input type="date" id="prod-filter-expiry" title="Filter by Expiry Date">
+              <select id="prod-filter-category">
+                <option value="">All Categories</option>
+                <option value="Grocery">Grocery</option>
+                <option value="Dairy">Dairy</option>
+                <option value="Snacks">Snacks</option>
+                <option value="Beverages">Beverages</option>
+                <option value="Bakery">Bakery</option>
+                <option value="Personal Care">Personal Care</option>
+                <option value="Household">Household</option>
+              </select>
+              <label class="checkbox-container text-white m-0">
+                <input type="checkbox" id="prod-filter-low-stock">
+                <span class="checkmark"></span>
+                Low Stock Alert
+              </label>
+              <button class="btn-primary" onclick="loadProductDirectory()"><i class="fa-solid fa-filter"></i> Filter</button>
+            </div>
+
+            <!-- Products Table -->
+            <div class="table-responsive mt-3">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>Image</th>
+                    <th>Product Details</th>
+                    <th>Barcode (EAN-13)</th>
+                    <th>Category</th>
+                    <th>Cost (₹)</th>
+                    <th>Sell (₹)</th>
+                    <th>GST</th>
+                    <th>Stock</th>
+                    <th>Rack / Batch</th>
+                    <th>Expiry Date</th>
+                    <th>Days Left</th>
+                    <th>Status</th>
+                    <th class="owner-only">Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="products-table-body">
+                  <tr><td colspan="13" class="text-center">Loading items...</td></tr>
+                </tbody>
+              </table>
+            </div>
+
+            <!-- Pagination -->
+            <div class="pagination-footer flex-between mt-3">
+              <span id="products-pagination-info">Showing page 1 of 1</span>
+              <div class="flex-row gap-2">
+                <button class="btn-secondary" id="btn-prod-prev" onclick="changeProductPage(-1)"><i class="fa-solid fa-angle-left"></i> Prev</button>
+                <button class="btn-secondary" id="btn-prod-next" onclick="changeProductPage(1)">Next <i class="fa-solid fa-angle-right"></i></button>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- PURCHASE LOG VIEW -->
+        <section id="view-purchases" class="view-section hidden owner-only">
+          <div class="grid-30-70">
+            <!-- Add Purchase invoice Entry -->
+            <div class="glass-card p-4 flex-col">
+              <h3><i class="fa-solid fa-cart-plus text-neon-blue"></i> Stock Replenishment Entry</h3>
+              <form id="purchase-form" class="mt-3">
+                <div class="form-group">
+                  <label>Select Supplier *</label>
+                  <select id="pur-supplier" required></select>
+                </div>
+                <div class="form-group">
+                  <label>Supplier Invoice No *</label>
+                  <input type="text" id="pur-invoice-no" placeholder="e.g. INV-9022" required>
+                </div>
+                <div class="form-group">
+                  <label>Invoice Date *</label>
+                  <input type="date" id="pur-date" required>
+                </div>
+                
+                <h4 class="mt-3 border-top-dash pt-3">Add Replenished Item</h4>
+                <div class="form-group">
+                  <label>Search Product *</label>
+                  <div class="relative-container">
+                    <input type="text" id="pur-product-search" placeholder="Type Product Name / SKU...">
+                    <div id="pur-search-results" class="search-results-dropdown hidden"></div>
+                  </div>
+                </div>
+                <div class="grid-2">
+                  <div class="form-group">
+                    <label>Purchase Qty *</label>
+                    <input type="number" id="pur-item-qty" min="1" value="1">
+                  </div>
+                  <div class="form-group">
+                    <label>Cost Rate (₹) *</label>
+                    <input type="number" id="pur-item-cost" min="0" step="0.01">
+                  </div>
+                </div>
+                <button type="button" class="btn-secondary w-full" onclick="addPurchaseItemToDraft()"><i class="fa-solid fa-plus-circle"></i> Add to List</button>
+
+                <div class="purchase-draft-totals mt-4 border-top-dash pt-3">
+                  <div class="bill-calc-row">
+                    <span>Draft Invoice Total:</span>
+                    <strong id="pur-draft-total">₹0.00</strong>
+                  </div>
+                </div>
+                <button type="submit" class="btn-success w-full mt-3"><i class="fa-solid fa-save"></i> Save Purchase Invoice</button>
+              </form>
+            </div>
+
+            <!-- Draft list and Purchase history table -->
+            <div class="flex-col gap-4">
+              <div class="glass-card p-4">
+                <h3>Draft replenished items</h3>
+                <div class="table-responsive mt-3">
+                  <table class="data-table">
+                    <thead>
+                      <tr>
+                        <th>Product</th>
+                        <th>Barcode (EAN-13)</th>
+                        <th>Qty</th>
+                        <th>Purchase Cost (₹)</th>
+                        <th>Total (₹)</th>
+                        <th>Remove</th>
+                      </tr>
+                    </thead>
+                    <tbody id="pur-draft-tbody">
+                      <tr><td colspan="6" class="text-center text-muted">No items added to draft list.</td></tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+
+              <div class="glass-card p-4">
+                <h3>Recent Replenishment History</h3>
+                <div class="table-responsive mt-3">
+                  <table class="data-table">
+                    <thead>
+                      <tr>
+                        <th>Invoice No</th>
+                        <th>Supplier</th>
+                        <th>Date</th>
+                        <th>Amount</th>
+                        <th>Items Count</th>
+                      </tr>
+                    </thead>
+                    <tbody id="purchase-history-tbody">
+                      <tr><td colspan="5" class="text-center">No purchases recorded yet.</td></tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- CUSTOMERS LIST VIEW -->
+        <section id="view-customers" class="view-section hidden">
+          <div class="glass-card p-4">
+            <div class="flex-between">
+              <h2>Customer loyalty Register</h2>
+              <button class="btn-primary" onclick="openCustomerModal()"><i class="fa-solid fa-user-plus"></i> Register Customer</button>
+            </div>
+            <div class="table-responsive mt-4">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>Customer Name</th>
+                    <th>Mobile</th>
+                    <th>Email</th>
+                    <th>Address</th>
+                    <th>Visits</th>
+                    <th>Total Spent (₹)</th>
+                    <th>Reward Points</th>
+                    <th>Last Visit</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="customers-table-body">
+                  <tr><td colspan="9" class="text-center">Loading customer profiles...</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <!-- SUPPLIERS VIEW -->
+        <section id="view-suppliers" class="view-section hidden owner-only">
+          <div class="glass-card p-4">
+            <div class="flex-between">
+              <h2>Inventory Supplier Directory</h2>
+              <button class="btn-primary" onclick="openSupplierModal()"><i class="fa-solid fa-plus"></i> Add Supplier</button>
+            </div>
+            <div class="table-responsive mt-4">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>Supplier Name</th>
+                    <th>Contact Person</th>
+                    <th>Mobile No</th>
+                    <th>Email</th>
+                    <th>Address</th>
+                    <th>GSTIN</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="suppliers-table-body">
+                  <tr><td colspan="7" class="text-center">Loading suppliers...</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <!-- MANAGE STAFF VIEW -->
+        <section id="view-workers" class="view-section hidden owner-only">
+          <div class="glass-card p-4">
+            <div class="flex-between">
+              <h2>Cashier & Worker Staff Management</h2>
+              <button class="btn-primary" onclick="openWorkerModal()"><i class="fa-solid fa-user-plus"></i> Add Worker</button>
+            </div>
+            <p class="description text-muted">Create billing account logins for supermarket cashiers. Workers are restricted from deleting items, resetting owner details, accessing settings, or checking profit audits.</p>
+            
+            <div class="table-responsive mt-4">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>Full Name</th>
+                    <th>Username</th>
+                    <th>System Role</th>
+                    <th>Mobile</th>
+                    <th>Email Address</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="workers-table-body">
+                  <tr><td colspan="7" class="text-center">Loading workers...</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <!-- REPORTS & ANALYTICS VIEW -->
+        <section id="view-reports" class="view-section hidden owner-only">
+          <div class="glass-card p-4">
+            <h2>Financial Audits & Profitability Reports</h2>
+            <div class="filters-bar mt-4">
+              <select id="report-filter-range" onchange="toggleCustomDates()">
+                <option value="today">Today's Sales</option>
+                <option value="yesterday">Yesterday</option>
+                <option value="weekly">Weekly Margin</option>
+                <option value="monthly">Monthly Audit</option>
+                <option value="custom">Custom Date Range</option>
+              </select>
+              <div id="report-custom-dates" class="flex-row gap-2 hidden">
+                <input type="date" id="report-start-date">
+                <input type="date" id="report-end-date">
+              </div>
+              <button class="btn-primary" onclick="loadSalesReport()"><i class="fa-solid fa-arrows-spin"></i> Generate Report</button>
+              <button class="btn-success" onclick="exportReportToCSV()"><i class="fa-solid fa-file-csv"></i> Export CSV</button>
+            </div>
+
+            <!-- Report Summary Counters -->
+            <div class="dashboard-cards mt-4">
+              <div class="card-stat glass-card border-neon-blue">
+                <div class="stat-info">
+                  <h3>Total Gross Revenue</h3>
+                  <p id="rep-revenue-val">₹0.00</p>
+                </div>
+              </div>
+              <div class="card-stat glass-card border-neon-yellow">
+                <div class="stat-info">
+                  <h3>Inventory Cost Price</h3>
+                  <p id="rep-cost-val">₹0.00</p>
+                </div>
+              </div>
+              <div class="card-stat glass-card border-neon-green">
+                <div class="stat-info">
+                  <h3>Net Profit Generated</h3>
+                  <p id="rep-profit-val">₹0.00</p>
+                </div>
+              </div>
+              <div class="card-stat glass-card border-neon-pink">
+                <div class="stat-info">
+                  <h3>GST Taxes Collected</h3>
+                  <p id="rep-gst-val">₹0.00</p>
+                </div>
+              </div>
+            </div>
+
+            <!-- Detailed Tables -->
+            <div class="grid-2 mt-4">
+              <div class="glass-card p-4">
+                <h3>Sales Invoice breakdown</h3>
+                <div class="table-responsive mt-3">
+                  <table class="data-table">
+                    <thead>
+                      <tr>
+                        <th>Invoice No</th>
+                        <th>Date</th>
+                        <th>Cashier</th>
+                        <th>GST Collected</th>
+                        <th>Final Amount</th>
+                      </tr>
+                    </thead>
+                    <tbody id="report-sales-tbody">
+                      <tr><td colspan="5" class="text-center">No reports generated yet.</td></tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+
+              <!-- GST Breakup -->
+              <div class="glass-card p-4">
+                <h3>GST Tax Ledger Brackets</h3>
+                <div class="table-responsive mt-3">
+                  <table class="data-table">
+                    <thead>
+                      <tr>
+                        <th>GST Rate Bracket</th>
+                        <th>Taxable Net Sales</th>
+                        <th>GST Tax Collected</th>
+                        <th>Total Amount</th>
+                      </tr>
+                    </thead>
+                    <tbody id="report-gst-tbody">
+                      <tr><td colspan="4" class="text-center">No reports generated yet.</td></tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+
+            <!-- Products Performance -->
+            <div class="glass-card p-4 mt-4">
+              <h3>Top Selling & Slow-Moving Products</h3>
+              <div class="grid-2 mt-3">
+                <div>
+                  <h4 class="text-neon-green mb-2"><i class="fa-solid fa-face-smile"></i> Top 10 Best Sellers</h4>
+                  <table class="data-table">
+                    <thead>
+                      <tr>
+                        <th>Product</th>
+                        <th>Qty Sold</th>
+                        <th>Revenue</th>
+                      </tr>
+                    </thead>
+                    <tbody id="report-best-sellers">
+                      <tr><td colspan="3" class="text-center">No performance logs.</td></tr>
+                    </tbody>
+                  </table>
+                </div>
+                <div>
+                  <h4 class="text-neon-pink mb-2"><i class="fa-solid fa-face-frown"></i> Worst Selling Products</h4>
+                  <table class="data-table">
+                    <thead>
+                      <tr>
+                        <th>Product</th>
+                        <th>Qty Sold</th>
+                        <th>Revenue</th>
+                      </tr>
+                    </thead>
+                    <tbody id="report-worst-sellers">
+                      <tr><td colspan="3" class="text-center">No performance logs.</td></tr>
+                    </tbody>
+                  </table>
+                </div>
+            </div>
+
+            <!-- Product Expiry Reports Section -->
+            <div class="glass-card p-4 mt-4" id="expiry-reports-card">
+              <div class="flex-between flex-wrap gap-2">
+                <div>
+                  <h3>Product Expiry & Warning Reports</h3>
+                  <p class="description text-muted">Generate and export lists of expired or expiring items.</p>
+                </div>
+                <div class="flex-row gap-2">
+                  <button class="btn-primary" onclick="printExpiryReport()"><i class="fa-solid fa-print"></i> Export to PDF</button>
+                  <button class="btn-success" onclick="exportExpiryReportToExcel()"><i class="fa-solid fa-file-excel"></i> Export to Excel</button>
+                </div>
+              </div>
+              
+              <div class="filters-bar mt-3">
+                <select id="expiry-report-status" onchange="loadExpiryReport()">
+                  <option value="">All Expiring / Expired Products</option>
+                  <option value="expired">Expired Products</option>
+                  <option value="7days">Expiring in 7 Days</option>
+                  <option value="15days">Expiring in 15 Days</option>
+                  <option value="30days">Expiring in 30 Days</option>
+                </select>
+                <button class="btn-primary" onclick="loadExpiryReport()"><i class="fa-solid fa-arrows-rotate"></i> Refresh List</button>
+              </div>
+
+              <div class="table-responsive mt-3 max-height-60vh">
+                <table class="data-table" id="expiry-report-table">
+                  <thead>
+                    <tr>
+                      <th>Product Details</th>
+                      <th>Barcode (EAN-13)</th>
+                      <th>Batch Number</th>
+                      <th>Supplier Name</th>
+                      <th>Stock Qty</th>
+                      <th>Expired Qty</th>
+                      <th>Expiry Date</th>
+                      <th>Days Left</th>
+                      <th>Expiry Status</th>
+                    </tr>
+                  </thead>
+                  <tbody id="expiry-report-tbody">
+                    <tr><td colspan="9" class="text-center text-muted">Select filter status or refresh to load list.</td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ACCESS DENIED FOR SETTINGS -->
+        <section id="view-settings-denied" class="view-section hidden">
+          <div class="glass-card p-5 text-center flex-col gap-3 justify-center align-center" style="max-width: 500px; margin: 50px auto;">
+            <i class="fa-solid fa-circle-exclamation text-neon-pink" style="font-size: 3rem;"></i>
+            <h1 style="color: var(--neon-pink); font-size: 2rem; margin-top: 15px;">Access Denied</h1>
+            <p style="font-size: 1.1rem; color: var(--text-color); margin-top: 10px;">Only the Owner can access Settings.</p>
+            <button class="btn-primary mt-4" style="align-self: center;" onclick="navigateSPA('dashboard')"><i class="fa-solid fa-house"></i> Go to Dashboard</button>
+          </div>
+        </section>
+
+        <!-- SYSTEM SETTINGS VIEW -->
+        <section id="view-settings" class="view-section hidden owner-only">
+          <div class="grid-30-70">
+            <!-- Left Side: backup & logs links -->
+            <div class="glass-card p-4 flex-col gap-3">
+              <h3>System Actions</h3>
+              <button class="btn-primary w-full" onclick="triggerBackupDownload()"><i class="fa-solid fa-file-export"></i> Manual DB Backup</button>
+              
+              <div class="form-group border-top-dash pt-3">
+                <label>Restore Database from JSON</label>
+                <input type="file" id="settings-restore-file" accept=".json" style="margin-top: 5px;">
+                <button class="btn-success w-full mt-2" onclick="triggerBackupRestore()"><i class="fa-solid fa-file-import"></i> Restore DB</button>
+              </div>
+
+              <div class="border-top-dash pt-3">
+                <h4 class="mb-2">Admin Audit Trail</h4>
+                <button class="btn-secondary w-full" onclick="loadAuditLogs()"><i class="fa-solid fa-file-waveform"></i> View Audit Log</button>
+              </div>
+            </div>
+
+            <!-- Right Side: Shop Details & printer configuration -->
+            <div class="glass-card p-4">
+              <h2>Shop Branding & Invoice Policy</h2>
+              <form id="settings-form" class="grid-2 mt-4">
+                <div class="form-group">
+                  <label>Store Name</label>
+                  <input type="text" id="set-shop-name" required>
+                </div>
+                <div class="form-group">
+                  <label>GSTIN Tax Number</label>
+                  <input type="text" id="set-gst-number" required>
+                </div>
+                <div class="form-group">
+                  <label>Contact Phone Number</label>
+                  <input type="text" id="set-mobile" required>
+                </div>
+                <div class="form-group">
+                  <label>Contact Email</label>
+                  <input type="email" id="set-email" required>
+                </div>
+                <div class="form-group span-2">
+                  <label>Store Address</label>
+                  <input type="text" id="set-address" required>
+                </div>
+                <div class="form-group">
+                  <label>UPI QR ID (For digital checks)</label>
+                  <input type="text" id="set-upi" placeholder="upi-id@bank" required>
+                </div>
+                <div class="form-group">
+                  <label>Low Stock Warning Threshold</label>
+                  <input type="number" id="set-threshold" min="1" required>
+                </div>
+                <div class="form-group">
+                  <label>Default Printer Mode</label>
+                  <select id="set-printer">
+                    <option value="Thermal">Thermal roll (80mm/58mm)</option>
+                    <option value="A4">A4 standard page size</option>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label>Upload Brand Logo</label>
+                  <input type="file" id="set-logo-input" accept="image/*">
+                </div>
+                <button type="submit" class="btn-success span-2"><i class="fa-solid fa-check-circle"></i> Save Settings</button>
+              </form>
+
+              <div id="settings-logo-preview-wrapper" class="mt-4 border-top-dash pt-3 hidden">
+                <h4>Store Brand Logo Preview</h4>
+                <div class="logo-preview mt-2">
+                  <img id="settings-logo-preview" src="" alt="Brand Logo">
+                </div>
+              </div>
+            </div>
+
+            <!-- UPI Payment Settings Card -->
+            <div class="glass-card p-4 mt-4">
+              <h2>UPI Payment Settings</h2>
+              <form id="upi-settings-form" class="grid-2 mt-4">
+                <div class="form-group">
+                  <label>Merchant Name</label>
+                  <input type="text" id="set-upi-merchant" placeholder="Super Market" required>
+                </div>
+                <div class="form-group">
+                  <label>UPI ID (For checkout scans)</label>
+                  <input type="text" id="set-upi-id" placeholder="merchant@upi" required>
+                </div>
+                <div class="form-group">
+                  <label>Enable QR Payment</label>
+                  <select id="set-upi-enable">
+                    <option value="true">Enabled</option>
+                    <option value="false">Disabled</option>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label>Upload Static QR Code Image</label>
+                  <input type="file" id="set-upi-qr-input" accept="image/*">
+                </div>
+                <button type="submit" class="btn-primary span-2"><i class="fa-solid fa-save"></i> Save UPI Payment Settings</button>
+              </form>
+
+              <div id="settings-upi-qr-preview-wrapper" class="mt-4 border-top-dash pt-3 hidden text-center">
+                <h4>Uploaded UPI QR Code Preview</h4>
+                <img id="settings-upi-qr-preview" src="" alt="UPI QR Code" style="max-width: 150px; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.3); margin-top: 8px;">
+              </div>
+            </div>
+          </div>
+        </section>
+        <!-- SUBSCRIPTION VIEW -->
+        <!-- SUBSCRIPTION EXPIRED / RENEWAL PAGE -->
+        <section id="view-subscription" class="view-section hidden owner-only">
+          <div class="sub-page-wrapper">
+
+            <!-- TOP WARNING BANNER -->
+            <div class="sub-warning-banner" id="sub-warning-banner">
+              <div class="sub-warning-icon">
+                <i class="fa-solid fa-triangle-exclamation"></i>
+              </div>
+              <div class="sub-warning-text">
+                <h1>⚠ Subscription Expired</h1>
+                <p>Your Super Market ERP subscription has expired. Please renew your subscription to continue using the software.</p>
+              </div>
+              <div class="sub-warning-badge" id="sub-days-expired-badge">
+                <span id="sub-days-expired-count">0</span>
+                <small>Days Expired</small>
+              </div>
+            </div>
+
+            <!-- PENDING APPROVAL BANNER (shown after payment submission) -->
+            <div class="sub-pending-banner hidden" id="sub-pending-banner">
+              <div class="sub-pending-icon">
+                <i class="fa-solid fa-hourglass-half sub-spin-slow"></i>
+              </div>
+              <div>
+                <h2>Payment Under Review</h2>
+                <p>Your payment has been submitted successfully. Please wait for Admin Approval. All ERP modules will be unlocked once approved.</p>
+              </div>
+            </div>
+
+            <!-- STATUS CARDS ROW -->
+            <div class="sub-status-grid" id="sub-status-grid">
+              <div class="sub-stat-card">
+                <i class="fa-solid fa-shop"></i>
+                <div>
+                  <small>Shop Name</small>
+                  <strong id="sub-shop-name">—</strong>
+                </div>
+              </div>
+              <div class="sub-stat-card">
+                <i class="fa-solid fa-box-open"></i>
+                <div>
+                  <small>Current Plan</small>
+                  <strong id="sub-current-plan">—</strong>
+                </div>
+              </div>
+              <div class="sub-stat-card sub-stat-danger">
+                <i class="fa-solid fa-calendar-xmark"></i>
+                <div>
+                  <small>Expiry Date</small>
+                  <strong id="sub-expiry-date">—</strong>
+                </div>
+              </div>
+              <div class="sub-stat-card sub-stat-danger">
+                <i class="fa-solid fa-clock-rotate-left"></i>
+                <div>
+                  <small>Days Expired</small>
+                  <strong id="sub-days-since-expiry">—</strong>
+                </div>
+              </div>
+              <div class="sub-stat-card sub-stat-warning" id="sub-renewal-status-card">
+                <i class="fa-solid fa-rotate"></i>
+                <div>
+                  <small>Renewal Status</small>
+                  <strong id="sub-renewal-status">No Request</strong>
+                </div>
+              </div>
+            </div>
+
+            <!-- MAIN BODY: Plans + Payment -->
+            <div class="sub-main-grid">
+
+              <!-- LEFT: Plan Selection -->
+              <div class="sub-plans-panel">
+                <div class="sub-section-title">
+                  <i class="fa-solid fa-tags"></i>
+                  <h3>Choose Your Plan</h3>
+                </div>
+
+                <div class="sub-plans-list" id="sub-plans-list">
+                  <!-- Dynamically rendered plan cards -->
+                  <div class="sub-loading-plans">
+                    <i class="fa-solid fa-spinner fa-spin"></i> Loading plans...
+                  </div>
+                </div>
+
+                <!-- UPI Info -->
+                <div class="sub-upi-box">
+                  <div class="sub-section-title mb-2">
+                    <i class="fa-solid fa-qrcode"></i>
+                    <h3>Scan & Pay via UPI</h3>
+                  </div>
+                  <div class="sub-qr-row">
+                    <div class="sub-qr-frame" id="sub-qr-frame">
+                      <div id="sub-payment-qr-canvas" style="width:170px;height:170px;display:flex;align-items:center;justify-content:center;">
+                        <i class="fa-solid fa-qrcode" style="font-size:3rem;opacity:0.3;"></i>
+                      </div>
+                    </div>
+                    <div class="sub-upi-details">
+                      <p class="text-muted" style="font-size:0.8rem;margin-bottom:8px;">Pay to this UPI ID</p>
+                      <div class="sub-upi-id-row">
+                        <code id="sub-upi-id-display">market@upi</code>
+                        <button class="sub-copy-btn" onclick="copyUpiId()" title="Copy UPI ID">
+                          <i class="fa-solid fa-copy"></i> Copy
+                        </button>
+                      </div>
+                      <p class="text-muted mt-2" style="font-size:0.75rem;">
+                        <i class="fa-solid fa-circle-info"></i>
+                        Accepted: Google Pay, PhonePe, Paytm, BHIM
+                      </p>
+                      <div class="sub-amount-display mt-2">
+                        <small>Amount to Pay</small>
+                        <strong id="sub-selected-amount">Select a plan</strong>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- RIGHT: Payment Form -->
+              <div class="sub-payment-panel">
+                <!-- Step 1: I Have Paid button -->
+                <div id="sub-step-1" class="sub-step-card">
+                  <div class="sub-section-title">
+                    <i class="fa-solid fa-file-invoice"></i>
+                    <h3>Submit Payment Details</h3>
+                  </div>
+                  <p class="text-muted" style="margin-bottom:20px;font-size:0.9rem;">After completing your UPI payment, fill in the details below and click <strong>"I Have Paid"</strong>.</p>
+
+                  <form id="subscription-payment-form" onsubmit="submitSubscriptionRenewal(event)" class="sub-form">
+                    <div class="form-group">
+                      <label><i class="fa-solid fa-fingerprint"></i> UTR / Transaction Reference ID *</label>
+                      <input type="text" id="sub-transaction-ref" placeholder="e.g. 309817265492" required pattern="[a-zA-Z0-9]{8,30}" autocomplete="off">
+                      <small class="form-hint">12-digit UTR number found in your UPI payment receipt</small>
+                    </div>
+                    <div class="grid-2 gap-3">
+                      <div class="form-group">
+                        <label><i class="fa-solid fa-calendar-day"></i> Payment Date *</label>
+                        <input type="date" id="sub-payment-date" required>
+                      </div>
+                      <div class="form-group">
+                        <label><i class="fa-solid fa-clock"></i> Payment Time *</label>
+                        <input type="text" id="sub-payment-time" placeholder="e.g. 02:30 PM" required>
+                      </div>
+                    </div>
+                    <div class="form-group">
+                      <label><i class="fa-solid fa-image"></i> Payment Screenshot <span class="text-muted">(Optional)</span></label>
+                      <input type="file" id="sub-screenshot-file" accept="image/*" class="sub-file-input">
+                      <small class="form-hint">Upload a screenshot of your UPI payment confirmation (JPG/PNG, max 2MB)</small>
+                    </div>
+
+                    <!-- Selected plan summary -->
+                    <div class="sub-plan-summary" id="sub-plan-summary">
+                      <i class="fa-solid fa-circle-info"></i>
+                      <span id="sub-plan-summary-text">Please select a plan first</span>
+                    </div>
+
+                    <button type="submit" class="sub-pay-btn" id="sub-pay-btn" disabled>
+                      <i class="fa-solid fa-circle-check"></i>
+                      I Have Paid — Submit for Approval
+                    </button>
+                  </form>
+                </div>
+
+                <!-- Step 2: Success state (shown after submission) -->
+                <div id="sub-step-2" class="sub-success-card hidden">
+                  <div class="sub-success-icon">
+                    <i class="fa-solid fa-circle-check"></i>
+                  </div>
+                  <h2>Payment Submitted!</h2>
+                  <p>Your payment has been submitted successfully.<br>Please wait for <strong>Admin Approval</strong>.</p>
+                  <div class="sub-success-details" id="sub-success-details"></div>
+                  <p class="text-muted mt-3" style="font-size:0.85rem;">
+                    <i class="fa-solid fa-lock"></i>
+                    All ERP modules remain locked until the Super Admin approves your payment.
+                  </p>
+                </div>
+
+                <!-- Contact & Logout -->
+                <div class="sub-action-footer">
+                  <button class="sub-action-btn sub-whatsapp-btn" onclick="openWhatsAppSupport()">
+                    <i class="fa-brands fa-whatsapp"></i> WhatsApp Support
+                  </button>
+                  <button class="sub-action-btn sub-support-btn" onclick="openEmailSupport()">
+                    <i class="fa-solid fa-headset"></i> Contact Support
+                  </button>
+                  <button class="sub-action-btn sub-logout-btn" onclick="logoutSession()">
+                    <i class="fa-solid fa-right-from-bracket"></i> Logout
+                  </button>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </section>
+
+        <!-- ACCOUNT SUSPENDED WARNING FOR WORKERS -->
+        <section id="view-suspended" class="view-section hidden">
+          <div class="flex-col align-center justify-center p-5 text-center glass-card border-neon-red" style="max-width: 600px; margin: 50px auto;">
+            <div class="stat-icon bg-neon-red-light mb-3" style="width: 80px; height: 80px; font-size: 2.5rem;">
+              <i class="fa-solid fa-lock text-neon-red"></i>
+            </div>
+            <h2 class="text-neon-red">Access Denied: Shop Subscription Suspended / Expired</h2>
+            <p class="text-muted mt-3">Your supermarket software subscription or free trial has expired or been temporarily suspended by the Super Admin.</p>
+            <p class="text-muted mt-2">Please contact the store owner or subscription administrator to renew services and restore checkout capabilities.</p>
+            <button class="btn-primary mt-4" onclick="navigateSPA('login')"><i class="fa-solid fa-arrow-left-long"></i> Back to Login</button>
+          </div>
+        </section>
+      </div>
+    </main>
+  </div>
+
+  <!-- ==================== DIALOGS & OVERLAYS ==================== -->
+
+  <!-- KEYBOARD SHORTCUTS MODAL -->
+  <div id="kbd-shortcuts-modal" class="modal-overlay hidden">
+    <div class="modal-content glass-card">
+      <div class="modal-header">
+        <h3><i class="fa-solid fa-keyboard"></i> POS Keyboard Shortcuts</h3>
+        <button class="modal-close" onclick="closeShortcutsModal()">&times;</button>
+      </div>
+      <div class="modal-body">
+        <ul class="shortcuts-list">
+          <li><span><kbd>F1</kbd></span> <span>Show Keyboard Shortcut Helper</span></li>
+          <li><span><kbd>F2</kbd></span> <span>Focus Barcode Scanner SKU box</span></li>
+          <li><span><kbd>F4</kbd></span> <span>Focus Manual Product search box</span></li>
+          <li><span><kbd>F8</kbd></span> <span>Checkout and pay via Cash</span></li>
+          <li><span><kbd>F9</kbd></span> <span>Checkout and pay via UPI QR Code</span></li>
+          <li><span><kbd>Esc</kbd></span> <span>Clear active cart or dismiss modals</span></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- CHECKOUT PAYMENT MODAL -->
+  <div id="payment-modal" class="modal-overlay hidden">
+    <div class="modal-content glass-card">
+      <div class="modal-header">
+        <h3>Invoice checkout</h3>
+        <button class="modal-close" onclick="closePaymentModal()">&times;</button>
+      </div>
+      <div class="modal-body flex-col">
+        <div class="checkout-sum-banner text-center">
+          <p>Total Payable Amount</p>
+          <h2 id="pay-total-val" class="text-neon-green">₹0.00</h2>
+        </div>
+
+        <div class="form-group mt-3">
+          <label>Select Payment Mode *</label>
+          <select id="pay-mode" onchange="togglePaymentFields()" required>
+            <option value="Cash">Cash payment</option>
+            <option value="UPI">UPI QR Code</option>
+            <option value="Card">Card Swipe</option>
+            <option value="Wallet">Digital Wallet</option>
+            <option value="Split">Split Payment</option>
+          </select>
+        </div>
+
+        <!-- QR Code display for UPI -->
+        <div id="pay-upi-qr-box" class="upi-qr-container hidden flex-col align-center p-3" style="background: rgba(255, 255, 255, 0.02); border: 1px solid var(--glass-border); border-radius: 12px; margin-top: 12px; gap: 8px; width: 100%;">
+          <p class="text-center text-muted m-0" style="font-size: 0.9rem; font-weight: 600; display: flex; align-items: center; gap: 8px;">
+            <i class="fa-solid fa-mobile-screen-button text-neon-blue"></i> Scan & Pay
+          </p>
+          
+          <div id="upi-qrcode-img-box" style="background: #fff; padding: 12px; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.3); display: flex; justify-content: center; align-items: center; width: 180px; height: 180px; margin: 8px auto;">
+            <!-- Canvas or Img rendered dynamically -->
+          </div>
+
+          <div class="upi-payment-details text-center mt-2 w-full" style="font-size: 0.85rem; color: var(--text-muted); display: flex; flex-direction: column; gap: 4px;">
+            <div>Merchant Name: <strong id="upi-merchant-name" class="text-white" style="font-size: 0.9rem;">-</strong></div>
+            <div>UPI ID: <strong id="upi-string-text" class="text-neon-blue">-</strong></div>
+            <div>Invoice No: <strong id="upi-invoice-no" class="text-white">-</strong></div>
+            <div style="font-size: 1.1rem; margin-top: 4px;">Invoice Amount: <strong id="upi-amount-val" class="text-neon-green" style="font-size: 1.2rem;">₹0.00</strong></div>
+          </div>
+
+          <button type="button" class="btn-secondary w-full mt-2" onclick="downloadUpiQR()"><i class="fa-solid fa-download"></i> Download QR Code</button>
+          
+          <div class="flex-row gap-2 mt-3 w-full">
+            <button type="button" class="btn-success flex-grow" onclick="markUpiAsPaid()"><i class="fa-solid fa-check-circle"></i> Payment Completed</button>
+            <button type="button" class="btn-secondary flex-grow" style="background-color: #ff3b30 !important; color: white;" onclick="cancelUpiPayment()"><i class="fa-solid fa-times-circle"></i> Cancel Payment</button>
+          </div>
+        </div>
+
+        <!-- Split Payment fields -->
+        <div id="pay-split-fields" class="split-fields-container hidden">
+          <div class="grid-2">
+            <div class="form-group">
+              <label>Cash Amount (₹)</label>
+              <input type="number" id="split-cash" value="0" min="0" oninput="calculateSplitBalance()">
+            </div>
+            <div class="form-group">
+              <label>UPI Amount (₹)</label>
+              <input type="number" id="split-upi" value="0" min="0" oninput="calculateSplitBalance()">
+            </div>
+            <div class="form-group">
+              <label>Card Amount (₹)</label>
+              <input type="number" id="split-card" value="0" min="0" oninput="calculateSplitBalance()">
+            </div>
+            <div class="form-group">
+              <label>Wallet Amount (₹)</label>
+              <input type="number" id="split-wallet" value="0" min="0" oninput="calculateSplitBalance()">
+            </div>
+          </div>
+          <p class="balance-alert mt-2" id="split-balance-text">Remaining: ₹0.00</p>
+        </div>
+
+        <!-- Transaction ID for UPI/Card -->
+        <div id="pay-transaction-field" class="form-group mt-2 hidden">
+          <label>Transaction / Ref ID</label>
+          <input type="text" id="pay-transaction-id" placeholder="e.g. TXN98273612">
+        </div>
+
+        <button type="button" id="checkout-complete-btn" class="btn-success w-full mt-4" onclick="submitBillCheckout()"><i class="fa-solid fa-receipt"></i> Complete Sale & Print</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- BILLING ADD CUSTOMER MODAL -->
+  <div id="billing-customer-modal" class="modal-overlay hidden">
+    <div class="modal-content glass-card">
+      <div class="modal-header">
+        <h3>Add New Customer</h3>
+        <button class="modal-close" onclick="closeBillingCustomerModal()">&times;</button>
+      </div>
+      <div class="modal-body">
+        <form id="billing-customer-form" class="flex-col gap-2" onsubmit="handleBillingCustomerSubmit(event)">
+          <div class="form-group">
+            <label>Customer Name *</label>
+            <input type="text" id="bill-cust-new-name" placeholder="Enter name" required autocomplete="off">
+          </div>
+          <div class="form-group">
+            <label>Mobile Number *</label>
+            <input type="tel" id="bill-cust-new-mobile" placeholder="10-digit mobile" required autocomplete="off" pattern="[0-9]{10}">
+          </div>
+          <div class="form-group">
+            <label>Email (Optional)</label>
+            <input type="email" id="bill-cust-new-email" placeholder="Enter email" autocomplete="off">
+          </div>
+          <div class="form-group">
+            <label>Address (Optional)</label>
+            <input type="text" id="bill-cust-new-address" placeholder="Enter address" autocomplete="off">
+          </div>
+          <button type="submit" class="btn-primary mt-3"><i class="fa-solid fa-user-plus"></i> Add & Select Customer</button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- AUDIT LOG MODAL -->
+  <div id="audit-log-modal" class="modal-overlay hidden">
+    <div class="modal-content glass-card modal-lg">
+      <div class="modal-header">
+        <h3>Security Audit Logs</h3>
+        <button class="modal-close" onclick="closeAuditModal()">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="table-responsive font-compact max-height-60vh">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Timestamp</th>
+                <th>User (Role)</th>
+                <th>IP Address</th>
+                <th>Operation</th>
+                <th>Details Description</th>
+              </tr>
+            </thead>
+            <tbody id="audit-logs-tbody">
+              <tr><td colspan="5" class="text-center">No logs generated.</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PRODUCTS MODAL (ADD / EDIT) -->
+  <div id="product-modal" class="modal-overlay hidden">
+    <div class="modal-content glass-card modal-lg">
+      <div class="modal-header">
+        <h3 id="product-modal-title">Add Inventory Product</h3>
+        <button class="modal-close" onclick="closeProductModal()">&times;</button>
+      </div>
+      <div class="modal-body">
+        <form id="product-form" class="grid-2">
+          <input type="hidden" id="prod-id">
+          <div class="form-group">
+            <label>Product Name *</label>
+            <input type="text" id="prod-name" required>
+          </div>
+          <div class="form-group">
+            <label>Barcode SKU (Barcode Type : EAN-13) *</label>
+            <div class="flex-row">
+              <input type="text" id="prod-barcode" required>
+              <button type="button" class="btn-secondary" onclick="generateRandomBarcode()" title="Generate Random Barcode"><i class="fa-solid fa-circle-nodes"></i> Gen</button>
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Category *</label>
+            <select id="prod-category" required>
+              <option value="Grocery">Grocery</option>
+              <option value="Dairy">Dairy</option>
+              <option value="Snacks">Snacks</option>
+              <option value="Beverages">Beverages</option>
+              <option value="Bakery">Bakery</option>
+              <option value="Personal Care">Personal Care</option>
+              <option value="Household">Household</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Subcategory</label>
+            <input type="text" id="prod-subcategory">
+          </div>
+          <div class="form-group">
+            <label>Brand Name</label>
+            <input type="text" id="prod-brand">
+          </div>
+          <div class="form-group">
+            <label>Distributor Supplier</label>
+            <select id="prod-supplier"></select>
+          </div>
+          <div class="form-group">
+            <label>Purchase Price (Cost) (₹) *</label>
+            <input type="number" id="prod-purchase-price" step="0.01" required>
+          </div>
+          <div class="form-group">
+            <label>Selling Price (Inc. Tax) (₹) *</label>
+            <input type="number" id="prod-selling-price" step="0.01" required>
+          </div>
+          <div class="form-group">
+            <label>MRP (Max Retail Price) (₹) *</label>
+            <input type="number" id="prod-mrp" step="0.01" required>
+          </div>
+          <div class="form-group">
+            <label>GST Rate percentage (%) *</label>
+            <select id="prod-gst" required>
+              <option value="0">0% (Nil)</option>
+              <option value="5">5% GST</option>
+              <option value="12">12% GST</option>
+              <option value="18">18% GST</option>
+              <option value="28">28% GST</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Current Stock Quantity *</label>
+            <input type="number" id="prod-current-stock" value="0" required>
+          </div>
+          <div class="form-group">
+            <label>Low Stock Warning Limit *</label>
+            <input type="number" id="prod-minimum-stock" value="5" required>
+          </div>
+          <div class="form-group">
+            <label>Manufacturing Date (MFG Date)</label>
+            <input type="date" id="prod-mfg-date">
+          </div>
+          <div class="form-group">
+            <label>Expiry Date (EXP Date)</label>
+            <input type="date" id="prod-expiry-date">
+          </div>
+          <div class="form-group">
+            <label>Shelf Life</label>
+            <input type="text" id="prod-shelf-life" placeholder="e.g. 6 months, 90 days">
+          </div>
+          <div class="form-group">
+            <label>Batch Number</label>
+            <input type="text" id="prod-batch">
+          </div>
+          <div class="form-group">
+            <label>Rack / Shelf Location</label>
+            <input type="text" id="prod-rack" placeholder="e.g. Shelf B-4">
+          </div>
+          <div class="form-group">
+            <label>Upload Image</label>
+            <input type="file" id="prod-image-file" accept="image/*">
+          </div>
+          <div class="form-group span-2">
+            <label>Product Description</label>
+            <input type="text" id="prod-desc">
+          </div>
+          <button type="submit" class="btn-primary span-2"><i class="fa-solid fa-save"></i> Save Product</button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- CSV IMPORT MODAL -->
+  <div id="csv-modal" class="modal-overlay hidden">
+    <div class="modal-content glass-card">
+      <div class="modal-header">
+        <h3>Bulk Import via CSV</h3>
+        <button class="modal-close" onclick="closeCsvModal()">&times;</button>
+      </div>
+      <div class="modal-body flex-col gap-2">
+        <p>Import products using a standard comma-separated spreadsheet template.</p>
+        <div class="sample-csv-guide">
+          <strong>Required Columns:</strong>
+          <code>barcode, name, category, purchasePrice, sellingPrice, mrp, gst, currentStock, minimumStock, brand, rackNumber, batchNumber</code>
+        </div>
+        <form id="csv-import-form" class="mt-3">
+          <div class="form-group">
+            <label>Select CSV File</label>
+            <input type="file" id="csv-file-input" accept=".csv" required>
+          </div>
+          <button type="submit" class="btn-success w-full mt-3"><i class="fa-solid fa-upload"></i> Process Spreadsheet Import</button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- WORKERS MODAL (ADD / EDIT) -->
+  <div id="worker-modal" class="modal-overlay hidden">
+    <div class="modal-content glass-card">
+      <div class="modal-header">
+        <h3 id="worker-modal-title">Register Cashier Worker</h3>
+        <button class="modal-close" onclick="closeWorkerModal()">&times;</button>
+      </div>
+      <div class="modal-body">
+        <form id="worker-form" class="flex-col gap-2">
+          <input type="hidden" id="work-id">
+          <div class="form-group">
+            <label>Worker Full Name *</label>
+            <input type="text" id="work-name" required>
+          </div>
+          <div class="form-group">
+            <label>System Role *</label>
+            <select id="work-role" required>
+              <option value="cashier">Cashier</option>
+              <option value="manager">Manager</option>
+              <option value="staff">Staff</option>
+              <option value="employee">Employee</option>
+              <option value="worker">Worker (Legacy)</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Username (For sign in) *</label>
+            <input type="text" id="work-username" required>
+          </div>
+          <div class="form-group">
+            <label>Mobile Number *</label>
+            <input type="tel" id="work-mobile" required>
+          </div>
+          <div class="form-group">
+            <label>Email Address *</label>
+            <input type="email" id="work-email" required>
+          </div>
+          <div class="form-group" id="work-pwd-group">
+            <label>Login Password *</label>
+            <input type="password" id="work-password" required>
+          </div>
+          <div class="form-group" id="work-status-group">
+            <label>Worker Status</label>
+            <select id="work-active">
+              <option value="true">Active Billing Privileges</option>
+              <option value="false">Locked / Suspended</option>
+            </select>
+          </div>
+          <button type="submit" class="btn-primary mt-3"><i class="fa-solid fa-save"></i> Save Worker Profile</button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- CUSTOMER MODAL (ADD / EDIT) -->
+  <div id="customer-modal" class="modal-overlay hidden">
+    <div class="modal-content glass-card">
+      <div class="modal-header">
+        <h3>Register Customer Profile</h3>
+        <button class="modal-close" onclick="closeCustomerModal()">&times;</button>
+      </div>
+      <div class="modal-body">
+        <form id="customer-form" class="flex-col gap-2">
+          <div class="form-group">
+            <label>Customer Name *</label>
+            <input type="text" id="cust-name" required>
+          </div>
+          <div class="form-group">
+            <label>Mobile Number *</label>
+            <input type="tel" id="cust-mobile" required>
+          </div>
+          <div class="form-group">
+            <label>Email Address (Optional)</label>
+            <input type="email" id="cust-email">
+          </div>
+          <div class="form-group">
+            <label>Address (Optional)</label>
+            <input type="text" id="cust-address">
+          </div>
+          <button type="submit" class="btn-primary mt-3"><i class="fa-solid fa-save"></i> Save Loyalty Profile</button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- SUPPLIER MODAL (ADD / EDIT) -->
+  <div id="supplier-modal" class="modal-overlay hidden">
+    <div class="modal-content glass-card">
+      <div class="modal-header">
+        <h3 id="supplier-modal-title">Add Supplier</h3>
+        <button class="modal-close" onclick="closeSupplierModal()">&times;</button>
+      </div>
+      <div class="modal-body">
+        <form id="supplier-form" class="flex-col gap-2">
+          <input type="hidden" id="supp-id">
+          <div class="form-group">
+            <label>Supplier / Distributor Name *</label>
+            <input type="text" id="supp-name" required>
+          </div>
+          <div class="form-group">
+            <label>Contact Person Name</label>
+            <input type="text" id="supp-contact">
+          </div>
+          <div class="form-group">
+            <label>Mobile Number *</label>
+            <input type="tel" id="supp-mobile" required>
+          </div>
+          <div class="form-group">
+            <label>Email Address</label>
+            <input type="email" id="supp-email">
+          </div>
+          <div class="form-group">
+            <label>GSTIN Number</label>
+            <input type="text" id="supp-gst">
+          </div>
+          <div class="form-group">
+            <label>Supplier Address</label>
+            <input type="text" id="supp-address">
+          </div>
+          <button type="submit" class="btn-primary mt-3"><i class="fa-solid fa-save"></i> Save Supplier</button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- BARCODE LABEL MODAL -->
+  <div id="barcode-label-modal" class="modal-overlay hidden">
+    <div class="modal-content glass-card" style="max-width: 900px; width: 90%;">
+      <div class="modal-header">
+        <h3>Generate Barcode Label</h3>
+        <button class="modal-close" onclick="closeBarcodeModal()">&times;</button>
+      </div>
+      <div class="modal-body flex-col align-center p-4">
+        <div class="form-group w-full mb-2">
+          <label>Number of Copies *</label>
+          <input type="number" id="barcode-copies" min="1" value="1" oninput="updateBarcodePreview()" style="width: 100%;">
+        </div>
+        <div class="w-full mb-4 text-muted" style="font-size: 0.85rem; font-weight: 600;">Barcode Type : EAN-13</div>
+        <!-- Printable Barcode Grid Container -->
+        <div id="barcode-printable-area" class="barcode-printable-area">
+          <!-- Dynamic barcode stickers rendered by JS -->
+        </div>
+        <button class="btn-primary w-full mt-4" onclick="printBarcodeLabel()"><i class="fa-solid fa-print"></i> Print Barcode Label</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== INVOICE PRINT PREVIEW MODAL ==================== -->
+  <div id="invoice-print-modal" class="modal-overlay hidden">
+    <div class="invoice-modal-content">
+      <div class="invoice-modal-actions no-print">
+        <h3>Invoice Receipt Complete</h3>
+        <div class="flex-row gap-2">
+          <button class="btn-secondary" onclick="closeInvoiceModal()"><i class="fa-solid fa-circle-xmark"></i> Close</button>
+          <button class="btn-primary" onclick="window.print()"><i class="fa-solid fa-print"></i> Print Invoice (Ctrl+P)</button>
+        </div>
+      </div>
+
+      <!-- Printable Invoice Area (Uses media queries to size according to setting) -->
+      <div id="invoice-printable-wrapper" class="invoice-container-print printer-thermal">
+        <div class="invoice-inner">
+          <div class="invoice-header text-center flex-col align-center">
+            <div id="inv-logo-wrapper" class="hidden">
+              <img id="inv-logo" src="" alt="Shop Logo" class="invoice-logo">
+            </div>
+            <h2 id="inv-shop-name">Super Market</h2>
+            <p id="inv-shop-address">123 Galaxy Way, Sector 5, Super Market City</p>
+            <p>Tel: <span id="inv-shop-mobile">9876543210</span></p>
+            <p>GSTIN: <span id="inv-shop-gst">22AAAAA0000A1Z5</span></p>
+            <h4 class="invoice-receipt-title mt-2">TAX INVOICE</h4>
+          </div>
+
+          <div class="invoice-metadata border-top-dash border-bottom-dash py-2 my-2 font-compact">
+            <div class="flex-between">
+              <span>Invoice: <strong id="inv-no">SALE-20260721-0001</strong></span>
+              <span id="inv-datetime">Date: 21-07-2026 08:30 PM</span>
+            </div>
+            <div class="flex-between mt-1">
+              <span>Cashier: <span id="inv-cashier">Alex Cashier</span></span>
+              <span>Customer: <strong id="inv-cust-name">Walk-in Customer</strong></span>
+            </div>
+            <div class="flex-between">
+              <span>Mobile: <span id="inv-cust-mobile">9999900000</span></span>
+              <span>Loyalty Points: <span id="inv-cust-points">0</span></span>
+            </div>
+          </div>
+
+          <!-- Invoice Items List -->
+          <table class="invoice-items-table w-full text-left font-compact">
+            <thead>
+              <tr class="border-bottom-dash">
+                <th width="50%">Item</th>
+                <th width="15%" class="text-right">Rate</th>
+                <th width="15%" class="text-center">Qty</th>
+                <th width="20%" class="text-right">Total</th>
+              </tr>
+            </thead>
+            <tbody id="inv-tbody">
+              <!-- Dynamically populated -->
+            </tbody>
+          </table>
+
+          <!-- Financial calculations -->
+          <div class="invoice-financials border-top-dash pt-2 mt-2 font-compact">
+            <div class="flex-between">
+              <span>Subtotal:</span>
+              <span id="inv-subtotal">₹0.00</span>
+            </div>
+            <div class="flex-between">
+              <span>GST Tax Amount:</span>
+              <span id="inv-gst">₹0.00</span>
+            </div>
+            <div class="flex-between text-muted">
+              <span>Discounts Applied:</span>
+              <span id="inv-discount">-₹0.00</span>
+            </div>
+            <div class="flex-between text-huge border-top-dash pt-2 mt-1">
+              <span>NET PAYABLE:</span>
+              <strong id="inv-net">₹0.00</strong>
+            </div>
+          </div>
+
+          <div class="invoice-payment-method border-top-dash pt-2 mt-2 font-compact text-center">
+            <p>Payment Mode: <strong id="inv-pay-mode">CASH</strong></p>
+            <p id="inv-pay-details" class="hidden">Transaction ID: TXN9872198</p>
+          </div>
+
+          <!-- UPI QR code image box in print -->
+          <div class="invoice-upi-print-qr flex-col align-center mt-3" id="inv-print-qr-box">
+            <p class="font-compact text-muted">Scan to Pay via UPI</p>
+            <div class="print-qr-svg-holder" id="inv-print-qr-svg"></div>
+          </div>
+
+          <div class="invoice-footer text-center border-top-dash pt-3 mt-3 font-compact">
+            <p>Thank You! Visit Again.</p>
+            <p class="font-tiny">Powered by Super Market</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Core JavaScript Router, API layer, Views -->
+  <script src="https://cdn.jsdelivr.net/npm/qrcode/build/qrcode.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.5/dist/JsBarcode.all.min.js"></script>
+  <script src="/js/api.js"></script>
+  <script src="/js/app.js"></script>
+  <script src="/js/views/dashboard.js"></script>
+  <script src="/js/views/billing.js"></script>
+  <script src="/js/views/products.js"></script>
+  <script src="/js/views/purchases.js"></script>
+  <script src="/js/views/customers.js"></script>
+  <script src="/js/views/suppliers.js"></script>
+  <script src="/js/views/workers.js"></script>
+  <script src="/js/views/reports.js"></script>
+  <script src="/js/views/settings.js"></script>
+  <script src="/js/views/subscription.js"></script>
+</body>
+</html>

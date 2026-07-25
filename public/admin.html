@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SaaS Super Admin Portal - Super Market</title>
+  <!-- Performance Resource Hints -->
+  <link rel="dns-prefetch" href="https://fonts.googleapis.com">
+  <link rel="dns-prefetch" href="https://fonts.gstatic.com">
+  <link rel="dns-prefetch" href="https://cdnjs.cloudflare.com">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <!-- FontAwesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="/css/style.css">
+  <style>
+    /* Admin Portal Specific CSS Tweaks to look extra premium */
+    body {
+      background: radial-gradient(circle at 10% 20%, rgba(90, 18, 142, 0.2) 0%, rgba(0, 0, 0, 0) 90%), #0d0b18;
+    }
+    .brand-admin {
+      background: linear-gradient(135deg, #ff007f, #7f00ff);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      font-weight: 800;
+    }
+    .admin-card-stat {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      border-radius: 16px;
+      padding: 24px;
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      backdrop-filter: blur(10px);
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+      transition: all 0.3s ease;
+    }
+    .admin-card-stat:hover {
+      transform: translateY(-5px);
+      border-color: rgba(255, 0, 127, 0.4);
+    }
+  </style>
+</head>
+<body>
+  <!-- System Notifications Container -->
+  <div id="notification-toast-container" class="toast-container"></div>
+
+  <div class="app-layout">
+    <!-- SIDEBAR -->
+    <aside class="sidebar glass-card">
+      <div class="sidebar-brand">
+        <i class="fa-solid fa-user-gear brand-icon text-neon-pink"></i>
+        <div>
+          <h2>SaaS Portal</h2>
+          <span class="brand-admin">SUPER ADMIN</span>
+        </div>
+      </div>
+
+      <nav class="sidebar-nav">
+        <ul>
+          <li><a href="#dashboard" class="nav-link active" onclick="navigateAdmin('dashboard')"><i class="fa-solid fa-chart-line"></i> Dashboard Stats</a></li>
+          <li><a href="#shops" class="nav-link" onclick="navigateAdmin('shops')"><i class="fa-solid fa-shop"></i> Manage Shops</a></li>
+          <li><a href="#payments" class="nav-link" onclick="navigateAdmin('payments')"><i class="fa-solid fa-receipt"></i> Verify Payments <span id="pending-badge" class="badge-count hidden">0</span></a></li>
+          <li><a href="#plans" class="nav-link" onclick="navigateAdmin('plans')"><i class="fa-solid fa-box"></i> Subscription Plans</a></li>
+          <li><a href="#logins" class="nav-link" onclick="navigateAdmin('logins')"><i class="fa-solid fa-history"></i> Login History</a></li>
+        </ul>
+      </nav>
+
+      <div class="sidebar-footer border-top-dash pt-3">
+        <button class="btn-danger w-full" onclick="adminLogout()"><i class="fa-solid fa-sign-out-alt"></i> Exit Portal</button>
+      </div>
+    </aside>
+
+    <!-- MAIN CONTENT AREA -->
+    <main class="main-frame">
+      <header class="topbar glass-card">
+        <div class="header-left">
+          <div class="breadcrumb">
+            <span class="text-muted">Super Admin Portal</span>
+            <i class="fa-solid fa-chevron-right separator"></i>
+            <strong id="breadcrumb-active">Dashboard Stats</strong>
+          </div>
+        </div>
+        <div class="header-right">
+          <div class="cashier-info">
+            <i class="fa-solid fa-user-circle user-avatar"></i>
+            <div>
+              <h4 id="admin-display-name">SaaS Super Admin</h4>
+              <span>Central Administrator</span>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <!-- VIEW CONTAINERS -->
+      <div class="content-body">
+        
+        <!-- DASHBOARD VIEW -->
+        <section id="view-dashboard" class="view-section">
+          <div class="dashboard-cards" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px;">
+            <div class="admin-card-stat">
+              <div class="stat-icon" style="background: rgba(255, 0, 127, 0.1); color: #ff007f; padding: 15px; border-radius: 12px;"><i class="fa-solid fa-indian-rupee-sign" style="font-size: 1.8rem;"></i></div>
+              <div class="stat-info">
+                <h3>Total Revenue</h3>
+                <p id="stat-total-revenue" style="font-size: 1.8rem; font-weight: 800; color: #ff007f;">₹0.00</p>
+              </div>
+            </div>
+            <div class="admin-card-stat">
+              <div class="stat-icon" style="background: rgba(0, 240, 255, 0.1); color: #00f0ff; padding: 15px; border-radius: 12px;"><i class="fa-solid fa-calendar-days" style="font-size: 1.8rem;"></i></div>
+              <div class="stat-info">
+                <h3>Monthly Revenue</h3>
+                <p id="stat-monthly-revenue" style="font-size: 1.8rem; font-weight: 800; color: #00f0ff;">₹0.00</p>
+              </div>
+            </div>
+            <div class="admin-card-stat">
+              <div class="stat-icon" style="background: rgba(57, 255, 20, 0.1); color: #39ff14; padding: 15px; border-radius: 12px;"><i class="fa-solid fa-shop" style="font-size: 1.8rem;"></i></div>
+              <div class="stat-info">
+                <h3>Total Shops</h3>
+                <p id="stat-total-shops" style="font-size: 1.8rem; font-weight: 800; color: #39ff14;">0</p>
+              </div>
+            </div>
+          </div>
+          
+          <div class="glass-card p-4 mt-4">
+            <h2>Super Admin Dashboard Overview</h2>
+            <p class="text-muted mt-2">Welcome to the central SaaS Management Portal. You can monitor global financials, verify pending renewal requests, suspend/activate stores, and configure billing plans.</p>
+          </div>
+        </section>
+
+        <!-- SHOPS MANAGEMENT VIEW -->
+        <section id="view-shops" class="view-section hidden">
+          <div class="glass-card p-4">
+            <div class="flex-between mb-4">
+              <h2>Registered Supermarkets & Shops</h2>
+            </div>
+            
+            <div class="table-responsive">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>Shop / Owner Details</th>
+                    <th>Contact Info</th>
+                    <th>Database Name</th>
+                    <th>Status</th>
+                    <th>Subscription Expiry</th>
+                    <th class="text-center">Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="shops-tbody">
+                  <tr><td colspan="6" class="text-center">Loading registered stores...</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <!-- PAYMENTS VERIFICATION VIEW -->
+        <section id="view-payments" class="view-section hidden">
+          <div class="glass-card p-4">
+            <h2>Pending Subscription Verifications</h2>
+            <p class="text-muted mb-4">Review payment references submitted by supermarket owners and activate their accounts.</p>
+            
+            <div class="table-responsive">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>Shop & Owner Details</th>
+                    <th>Selected Plan</th>
+                    <th>UTR / Ref ID</th>
+                    <th>Amount</th>
+                    <th>Payment Date & Time</th>
+                    <th>Screenshot</th>
+                    <th>Status</th>
+                    <th class="text-center">Action</th>
+                  </tr>
+                </thead>
+                <tbody id="payments-tbody">
+                  <tr><td colspan="8" class="text-center">No pending payments for verification.</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <!-- PLANS VIEW -->
+        <section id="view-plans" class="view-section hidden">
+          <div class="grid-30-70">
+            <!-- Plan Form -->
+            <div class="glass-card p-4">
+              <h3 id="plan-form-title">Create Subscription Plan</h3>
+              <form id="plan-form" class="flex-col gap-2 mt-4" onsubmit="savePlan(event)">
+                <input type="hidden" id="plan-id">
+                <div class="form-group">
+                  <label>Plan Name *</label>
+                  <input type="text" id="plan-name" placeholder="e.g. Yearly Plan" required>
+                </div>
+                <div class="form-group">
+                  <label>Pricing (₹) *</label>
+                  <input type="number" id="plan-price" min="0" required>
+                </div>
+                <div class="form-group">
+                  <label>Duration (Days) *</label>
+                  <input type="number" id="plan-duration" min="1" required>
+                </div>
+                <div class="form-group">
+                  <label>Description</label>
+                  <input type="text" id="plan-desc" placeholder="Standard plan features...">
+                </div>
+                <button type="submit" class="btn-primary mt-3"><i class="fa-solid fa-save"></i> Save Plan Config</button>
+                <button type="button" id="plan-reset-btn" class="btn-secondary hidden mt-2" onclick="resetPlanForm()">Cancel Edit</button>
+              </form>
+            </div>
+
+            <!-- Plans List -->
+            <div class="glass-card p-4">
+              <h2>Subscription Billing Tiers</h2>
+              <div class="table-responsive mt-4">
+                <table class="data-table">
+                  <thead>
+                    <tr>
+                      <th>Plan Name</th>
+                      <th>Pricing</th>
+                      <th>Validity</th>
+                      <th>Status</th>
+                      <th class="text-center">Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody id="plans-tbody">
+                    <tr><td colspan="5" class="text-center">Loading plans...</td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
+          <!-- Platform UPI Configuration Settings -->
+          <div class="glass-card p-4 mt-4" style="max-width: 600px;">
+            <h2><i class="fa-solid fa-qrcode text-neon-pink"></i> Platform UPI Settings</h2>
+            <p class="text-muted mb-4">Set the platform UPI ID and merchant name that shop owners see when paying manually for renewals.</p>
+            <form id="global-upi-form" onsubmit="saveGlobalUpiSettings(event)">
+              <div class="grid-2 mt-3">
+                <div class="form-group">
+                  <label>Platform UPI ID *</label>
+                  <input type="text" id="global-upi-id" placeholder="merchant@upi" required>
+                </div>
+                <div class="form-group">
+                  <label>UPI Merchant Name *</label>
+                  <input type="text" id="global-merchant-name" placeholder="Super Market Platform" required>
+                </div>
+              </div>
+              <button type="submit" class="btn-primary mt-3"><i class="fa-solid fa-save"></i> Save UPI Configuration</button>
+            </form>
+          </div>
+        </section>
+
+        <!-- LOGIN HISTORY VIEW -->
+        <section id="view-logins" class="view-section hidden">
+          <div class="glass-card p-4">
+            <h2>Active User Logins Audit Trail</h2>
+            <p class="text-muted mb-4">Centralized login logs across all shop systems.</p>
+            
+            <div class="table-responsive">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>Timestamp</th>
+                    <th>Username</th>
+                    <th>Role</th>
+                    <th>IP Address</th>
+                    <th>Browser User Agent</th>
+                  </tr>
+                </thead>
+                <tbody id="logins-tbody">
+                  <tr><td colspan="5" class="text-center">Loading logins...</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+      </div>
+    </main>
+  </div>
+
+  <!-- Core Javascript -->
+  <script src="/js/api.js"></script>
+  <script>
+    // Simple helper toast function for superadmin page
+    function showToast(message, type = 'info') {
+      const container = document.getElementById('notification-toast-container');
+      const toast = document.createElement('div');
+      toast.className = `toast ${type}`;
+      
+      const icon = type === 'success' ? 'fa-circle-check' : (type === 'error' ? 'fa-triangle-exclamation' : 'fa-circle-info');
+      toast.innerHTML = `
+        <i class="fa-solid ${icon}"></i>
+        <div class="toast-content">
+          <p>${message}</p>
+        </div>
+        <button class="toast-close" onclick="this.parentElement.remove()">&times;</button>
+      `;
+      
+      container.appendChild(toast);
+      setTimeout(() => {
+        toast.remove();
+      }, 5000);
+    }
+  </script>
+  <script src="/js/views/admin.js"></script>
+</body>
+</html>

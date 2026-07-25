@@ -1,0 +1,396 @@
+{
+  "exportTimestamp": "2026-07-22T19:47:22.036Z",
+  "exportedBy": "owner",
+  "collections": {
+    "users": [
+      {
+        "_id": "6a611b159c8a654d83de744a",
+        "name": "Orbit Manager",
+        "username": "owner",
+        "email": "owner@orbitmarket.com",
+        "mobile": "9999988888",
+        "role": "owner",
+        "shopName": "Orbit Super Market",
+        "gstNumber": "22AAAAA0000A1Z5",
+        "shopAddress": "123 Galaxy Way, Sector 5, Orbit City",
+        "securityQuestions": [
+          {
+            "question": "What is your favorite color?",
+            "answer": "blue",
+            "_id": "6a611b159c8a654d83de744b"
+          },
+          {
+            "question": "What is your birth city?",
+            "answer": "orbit",
+            "_id": "6a611b159c8a654d83de744c"
+          }
+        ],
+        "resetOtpAttempts": 0,
+        "isOtpVerified": false,
+        "active": true,
+        "createdAt": "2026-07-22T19:33:41.784Z",
+        "__v": 0
+      },
+      {
+        "_id": "6a611b159c8a654d83de744e",
+        "name": "Alex Cashier",
+        "username": "worker",
+        "email": "alex@orbitmarket.com",
+        "mobile": "7777766666",
+        "role": "worker",
+        "resetOtpAttempts": 0,
+        "isOtpVerified": false,
+        "createdBy": "6a611b159c8a654d83de744a",
+        "active": true,
+        "securityQuestions": [],
+        "createdAt": "2026-07-22T19:33:41.937Z",
+        "__v": 0
+      }
+    ],
+    "products": [
+      {
+        "_id": "6a611b169c8a654d83de7465",
+        "name": "Whole Grain Wheat Bread 400g",
+        "barcode": "8901725181222",
+        "category": "Bakery",
+        "subcategory": "Bread",
+        "brand": "Stellar Foods",
+        "purchasePrice": 32,
+        "sellingPrice": 40,
+        "mrp": 45,
+        "gst": 5,
+        "productImage": "",
+        "minimumStock": 10,
+        "currentStock": 25,
+        "supplier": "6a611b169c8a654d83de7454",
+        "batchNumber": "BR-2026-07",
+        "rackNumber": "Rack A-3",
+        "description": "Fresh fiber-rich whole wheat bread.",
+        "createdAt": "2026-07-22T19:33:42.414Z",
+        "__v": 0
+      },
+      {
+        "_id": "6a611b169c8a654d83de7466",
+        "name": "Cream Gold Butter 500g",
+        "barcode": "8901262010014",
+        "category": "Dairy",
+        "subcategory": "Butter",
+        "brand": "Cosmic Dairy",
+        "purchasePrice": 210,
+        "sellingPrice": 245,
+        "mrp": 260,
+        "gst": 12,
+        "productImage": "",
+        "minimumStock": 8,
+        "currentStock": 15,
+        "supplier": "6a611b169c8a654d83de7453",
+        "batchNumber": "BT-348",
+        "rackNumber": "Chiller-1",
+        "description": "Salted butter made from fresh cow milk.",
+        "createdAt": "2026-07-22T19:33:42.415Z",
+        "__v": 0
+      },
+      {
+        "_id": "6a611b169c8a654d83de7467",
+        "name": "Organic Milk 1L Tetra",
+        "barcode": "8901262151236",
+        "category": "Dairy",
+        "subcategory": "Milk",
+        "brand": "Cosmic Dairy",
+        "purchasePrice": 60,
+        "sellingPrice": 72,
+        "mrp": 75,
+        "gst": 0,
+        "productImage": "",
+        "minimumStock": 15,
+        "currentStock": 30,
+        "supplier": "6a611b169c8a654d83de7453",
+        "batchNumber": "MK-102",
+        "rackNumber": "Chiller-2",
+        "description": "UHT treated long life organic milk.",
+        "createdAt": "2026-07-22T19:33:42.415Z",
+        "__v": 0
+      },
+      {
+        "_id": "6a611b169c8a654d83de7468",
+        "name": "Instant Noodles Masala 70g",
+        "barcode": "8901058002315",
+        "category": "Snacks",
+        "subcategory": "Noodles",
+        "brand": "Stellar Foods",
+        "purchasePrice": 11.5,
+        "sellingPrice": 14,
+        "mrp": 14,
+        "gst": 18,
+        "productImage": "",
+        "minimumStock": 20,
+        "currentStock": 8,
+        "supplier": "6a611b169c8a654d83de7454",
+        "batchNumber": "ND-992",
+        "rackNumber": "Rack C-1",
+        "description": "Spicy Indian masala style instant noodles.",
+        "createdAt": "2026-07-22T19:33:42.415Z",
+        "__v": 0
+      },
+      {
+        "_id": "6a611b169c8a654d83de7469",
+        "name": "Sparkling Orange Cola 500ml",
+        "barcode": "8901764021237",
+        "category": "Beverages",
+        "subcategory": "Soft Drinks",
+        "brand": "Galaxy Dist",
+        "purchasePrice": 24,
+        "sellingPrice": 35,
+        "mrp": 40,
+        "gst": 28,
+        "productImage": "",
+        "minimumStock": 12,
+        "currentStock": 4,
+        "supplier": "6a611b169c8a654d83de7452",
+        "batchNumber": "CO-543",
+        "rackNumber": "Beverage Fridge 1",
+        "description": "Carbonated fizzy orange drink.",
+        "createdAt": "2026-07-22T19:33:42.415Z",
+        "__v": 0
+      },
+      {
+        "_id": "6a611b169c8a654d83de746a",
+        "name": "Premium Basmati Rice 5kg",
+        "barcode": "8902532451029",
+        "category": "Grocery",
+        "subcategory": "Rice",
+        "brand": "Galaxy Dist",
+        "purchasePrice": 480,
+        "sellingPrice": 580,
+        "mrp": 650,
+        "gst": 5,
+        "productImage": "",
+        "minimumStock": 5,
+        "currentStock": 31,
+        "supplier": "6a611b169c8a654d83de7452",
+        "batchNumber": "RC-Bas-22",
+        "rackNumber": "Rack D-2",
+        "description": "Long grain aged aromatic basmati rice.",
+        "createdAt": "2026-07-22T19:33:42.415Z",
+        "__v": 0
+      },
+      {
+        "_id": "6a611b169c8a654d83de746b",
+        "name": "Aloe Vera Hand Wash 250ml",
+        "barcode": "8901396324124",
+        "category": "Personal Care",
+        "subcategory": "Soap",
+        "brand": "Galaxy Dist",
+        "purchasePrice": 65,
+        "sellingPrice": 85,
+        "mrp": 99,
+        "gst": 18,
+        "productImage": "",
+        "minimumStock": 8,
+        "currentStock": 0,
+        "supplier": "6a611b169c8a654d83de7452",
+        "batchNumber": "HW-773",
+        "rackNumber": "Rack F-4",
+        "description": "Gentle moisturizing handwash liquid.",
+        "createdAt": "2026-07-22T19:33:42.416Z",
+        "__v": 0
+      }
+    ],
+    "customers": [
+      {
+        "_id": "6a611b169c8a654d83de7456",
+        "name": "Alice Johnson",
+        "mobile": "9900990099",
+        "email": "alice@gmail.com",
+        "address": "Apartment 4B, Astro Towers, Orbit City",
+        "totalVisits": 12,
+        "totalPurchase": 4500,
+        "lastPurchaseDate": "2026-07-22T19:33:40.144Z",
+        "rewardPoints": 45,
+        "createdAt": "2026-07-22T19:33:42.176Z",
+        "__v": 0
+      },
+      {
+        "_id": "6a611b169c8a654d83de7457",
+        "name": "Bob Smith",
+        "mobile": "9800980098",
+        "email": "bob@gmail.com",
+        "address": "Flat 101, Comet Heights, Orbit City",
+        "totalVisits": 5,
+        "totalPurchase": 1800,
+        "lastPurchaseDate": "2026-07-22T19:33:40.144Z",
+        "rewardPoints": 18,
+        "createdAt": "2026-07-22T19:33:42.177Z",
+        "__v": 0
+      }
+    ],
+    "suppliers": [
+      {
+        "_id": "6a611b169c8a654d83de7452",
+        "name": "Galaxy Distributors",
+        "contactPerson": "John Doe",
+        "mobile": "9898989898",
+        "email": "john@galaxydist.com",
+        "address": "45 Trade Ring, Phase 1, Industrial Area",
+        "gstNumber": "22GALAXY0000Z1A",
+        "createdAt": "2026-07-22T19:33:42.135Z",
+        "__v": 0
+      },
+      {
+        "_id": "6a611b169c8a654d83de7453",
+        "name": "Cosmic Dairy Supplies",
+        "contactPerson": "Sarah Connor",
+        "mobile": "8787878787",
+        "email": "sarah@cosmicdairy.com",
+        "address": "Dairy Lane, Sector 12, Farm City",
+        "gstNumber": "22COSMIC0000Z1B",
+        "createdAt": "2026-07-22T19:33:42.135Z",
+        "__v": 0
+      },
+      {
+        "_id": "6a611b169c8a654d83de7454",
+        "name": "Stellar Packaged Foods",
+        "contactPerson": "David Miller",
+        "mobile": "7676767676",
+        "email": "david@stellarfoods.com",
+        "address": "Food Plaza, Block B, Processing Zone",
+        "gstNumber": "22STELLAR0000Z1C",
+        "createdAt": "2026-07-22T19:33:42.136Z",
+        "__v": 0
+      }
+    ],
+    "sales": [
+      {
+        "paymentDetails": {
+          "cashAmount": 0,
+          "upiAmount": 0,
+          "cardAmount": 0,
+          "walletAmount": 0
+        },
+        "_id": "6a611b179c8a654d83de749d",
+        "invoiceNo": "ORBIT-20260722-0001",
+        "customer": "6a611b169c8a654d83de7456",
+        "cashier": "6a611b159c8a654d83de744e",
+        "items": [
+          {
+            "product": "6a611b169c8a654d83de7465",
+            "name": "Whole Grain Wheat Bread 400g",
+            "barcode": "8901725181222",
+            "quantity": 2,
+            "purchasePrice": 32,
+            "sellingPrice": 40,
+            "mrp": 45,
+            "gstPercent": 5,
+            "gstAmount": 4,
+            "discountAmount": 0,
+            "total": 80,
+            "_id": "6a611b179c8a654d83de749e"
+          }
+        ],
+        "subtotal": 80,
+        "totalDiscount": 0,
+        "totalGst": 4,
+        "finalAmount": 80,
+        "paymentMode": "Cash",
+        "rewardPointsEarned": 0,
+        "createdAt": "2026-07-22T19:33:43.774Z",
+        "__v": 0
+      }
+    ],
+    "purchases": [
+      {
+        "_id": "6a611b179c8a654d83de74a6",
+        "invoiceNo": "PINV-98745",
+        "supplier": "6a611b169c8a654d83de7452",
+        "items": [
+          {
+            "product": "6a611b169c8a654d83de7465",
+            "quantity": 50,
+            "purchasePrice": 30,
+            "gstPercent": 5,
+            "gstAmount": 75,
+            "total": 1575,
+            "_id": "6a611b179c8a654d83de74a7"
+          }
+        ],
+        "totalAmount": 1575,
+        "paymentStatus": "Paid",
+        "purchaseDate": "2026-07-22T19:33:43.946Z",
+        "createdAt": "2026-07-22T19:33:43.946Z",
+        "__v": 0
+      },
+      {
+        "_id": "6a611cfe9850a2998edb2083",
+        "invoiceNo": "PINV-9999",
+        "supplier": "6a611b169c8a654d83de7452",
+        "items": [
+          {
+            "product": "6a611b169c8a654d83de746a",
+            "quantity": 20,
+            "purchasePrice": 480,
+            "gstPercent": 5,
+            "gstAmount": 457.14,
+            "total": 9600,
+            "_id": "6a611cfe9850a2998edb2084"
+          }
+        ],
+        "totalAmount": 9600,
+        "paymentStatus": "Paid",
+        "purchaseDate": "2026-07-23T00:00:00.000Z",
+        "createdAt": "2026-07-22T19:41:50.445Z",
+        "__v": 0
+      }
+    ],
+    "settings": [
+      {
+        "_id": "6a611b169c8a654d83de7450",
+        "shopName": "Orbit Super Market",
+        "shopAddress": "123 Galaxy Way, Sector 5, Orbit City",
+        "shopMobile": "9999988888",
+        "shopEmail": "owner@orbitmarket.com",
+        "gstNumber": "22AAAAA0000A1Z5",
+        "shopLogo": "",
+        "lowStockThreshold": 10,
+        "enableGst": true,
+        "qrCodeUpi": "orbitmarket@upi",
+        "printerType": "Thermal",
+        "theme": "dark",
+        "createdAt": "2026-07-22T19:33:42.095Z",
+        "__v": 0
+      }
+    ],
+    "activityLogs": [
+      {
+        "_id": "6a611b189c8a654d83de74ab",
+        "username": "system",
+        "role": "owner",
+        "action": "Seeding",
+        "details": "Supermarket database fully seeded. 20 collections populated.",
+        "createdAt": "2026-07-22T19:33:44.005Z",
+        "__v": 0
+      },
+      {
+        "_id": "6a611be19850a2998edb1faa",
+        "user": "6a611b159c8a654d83de744a",
+        "username": "owner",
+        "role": "owner",
+        "action": "Login",
+        "details": "User 'owner' logged in successfully",
+        "ipAddress": "127.0.0.1",
+        "createdAt": "2026-07-22T19:37:05.571Z",
+        "__v": 0
+      },
+      {
+        "_id": "6a611cfe9850a2998edb208d",
+        "user": "6a611b159c8a654d83de744a",
+        "username": "owner",
+        "role": "owner",
+        "action": "Create Purchase",
+        "details": "Purchase Invoice 'PINV-9999' recorded. Inventory quantities automatically incremented.",
+        "ipAddress": "127.0.0.1",
+        "createdAt": "2026-07-22T19:41:50.675Z",
+        "__v": 0
+      }
+    ]
+  }
+}
