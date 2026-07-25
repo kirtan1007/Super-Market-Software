@@ -8,9 +8,10 @@ const {
   updateSettings,
   uploadLogo,
   uploadUpiQrImage,
-  getActivityLogs
+  getActivityLogs,
+  resetStoreData
 } = require('../controllers/settingsController');
-const { protect, authorize } = require('../middleware/auth');
+const { protect, authorize, restoreTenantContext } = require('../middleware/auth');
 
 // Ensure uploads directory exists
 const uploadsDir = path.join(__dirname, '..', 'public', 'uploads');
@@ -66,8 +67,9 @@ router.get('/', getSettings);
 
 // Owner-only settings manipulation
 router.put('/', authorize('owner'), updateSettings);
-router.post('/logo', authorize('owner'), upload.single('shopLogo'), uploadLogo);
-router.post('/upi-qr', authorize('owner'), uploadUpiQr.single('upiQrImage'), uploadUpiQrImage);
+router.post('/logo', authorize('owner'), upload.single('shopLogo'), restoreTenantContext, uploadLogo);
+router.post('/upi-qr', authorize('owner'), uploadUpiQr.single('upiQrImage'), restoreTenantContext, uploadUpiQrImage);
 router.get('/logs', authorize('owner'), getActivityLogs);
+router.post('/reset', authorize('owner'), resetStoreData);
 
 module.exports = router;

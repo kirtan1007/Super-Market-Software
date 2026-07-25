@@ -119,6 +119,7 @@ const protect = async (req, res, next) => {
     req.ownerId = ownerId;
     req.shopId = shopId;
     req.tenantId = tenantId;
+    req.databaseName = databaseName;
 
     const asyncLocalStorage = require('../config/tenantContext');
     asyncLocalStorage.run({ ownerId, shopId, tenantId, databaseName }, () => {
@@ -126,6 +127,23 @@ const protect = async (req, res, next) => {
     });
   } catch (error) {
     return res.status(401).json({ success: false, message: 'Session expired, please login again' });
+  }
+};
+
+// Restore tenant context after middlewares that break AsyncLocalStorage (like multer)
+const restoreTenantContext = (req, res, next) => {
+  const asyncLocalStorage = require('../config/tenantContext');
+  const ownerId = req.ownerId;
+  const shopId = req.shopId;
+  const tenantId = req.tenantId;
+  const databaseName = req.databaseName;
+
+  if (ownerId) {
+    asyncLocalStorage.run({ ownerId, shopId, tenantId, databaseName }, () => {
+      next();
+    });
+  } else {
+    next();
   }
 };
 
@@ -161,6 +179,7 @@ const logActivity = async (req, action, details) => {
 
 module.exports = {
   protect,
+  restoreTenantContext,
   authorize,
   logActivity
 };

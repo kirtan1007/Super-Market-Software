@@ -233,3 +233,30 @@ async function triggerBackupRestore() {
     }
   }
 }
+
+// Reset Database / All Store Data
+async function triggerDatabaseReset() {
+  if (confirm('CRITICAL WARNING: This will permanently delete ALL products, sales, customers, suppliers, settings, workers, and activity logs. This action CANNOT be undone. Are you absolutely sure you want to proceed?')) {
+    const password = prompt('For security, please enter your password to confirm data reset:');
+    if (!password) {
+      showToast('Data reset cancelled.', 'info');
+      return;
+    }
+
+    try {
+      await API.settings.resetData(password);
+      showToast('All store data has been successfully reset! Logging out...', 'success');
+      
+      // Clear token and redirect to login
+      localStorage.removeItem('token');
+      sessionStorage.removeItem('token');
+      localStorage.removeItem('rememberMe');
+      
+      setTimeout(() => {
+        window.location.reload();
+      }, 2000);
+    } catch (err) {
+      showToast(err.message || 'Failed to reset store data', 'error');
+    }
+  }
+}

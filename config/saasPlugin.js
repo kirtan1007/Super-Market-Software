@@ -42,7 +42,7 @@ const saasPlugin = (schema) => {
       }
 
       const colName = this.constructor.modelName;
-      const globalModels = ['User', 'LoginHistory', 'OtpVerification', 'ActivityLog', 'Plan', 'PaymentRequest', 'MailLog', 'GlobalConfig'];
+      const globalModels = ['User', 'LoginHistory', 'OtpVerification', 'ActivityLog', 'Plan', 'PaymentRequest', 'MailLog', 'GlobalConfig', 'Setting'];
       const isPublic = globalModels.includes(colName);
 
       if (!isPublic) {
@@ -77,7 +77,7 @@ const saasPlugin = (schema) => {
   queryHooks.forEach(hook => {
     schema.pre(hook, function(next) {
       const colName = this.model.modelName;
-      const globalModels = ['User', 'LoginHistory', 'OtpVerification', 'ActivityLog', 'Plan', 'PaymentRequest', 'MailLog', 'GlobalConfig'];
+      const globalModels = ['User', 'LoginHistory', 'OtpVerification', 'ActivityLog', 'Plan', 'PaymentRequest', 'MailLog', 'GlobalConfig', 'Setting'];
       if (globalModels.includes(colName)) {
         return next();
       }
@@ -93,7 +93,7 @@ const saasPlugin = (schema) => {
   // Pre-aggregate hook to inject ownerId automatically
   schema.pre('aggregate', function(next) {
     const colName = this._model.modelName;
-    const globalModels = ['User', 'LoginHistory', 'OtpVerification', 'ActivityLog', 'Plan', 'PaymentRequest', 'MailLog', 'GlobalConfig'];
+    const globalModels = ['User', 'LoginHistory', 'OtpVerification', 'ActivityLog', 'Plan', 'PaymentRequest', 'MailLog', 'GlobalConfig', 'Setting'];
     if (globalModels.includes(colName)) {
       return next();
     }

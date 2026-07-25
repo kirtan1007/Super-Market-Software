@@ -220,7 +220,8 @@ const API = {
     update:      (data)     => apiRequest('/settings',      'PUT',  data),
     uploadLogo:  (formData) => apiRequest('/settings/logo', 'POST', formData, true),
     uploadUpiQr: (formData) => apiRequest('/settings/upi-qr','POST', formData, true),
-    getAuditLogs:()         => apiRequest('/settings/logs')
+    getAuditLogs:()         => apiRequest('/settings/logs'),
+    resetData:   (password) => apiRequest('/settings/reset', 'POST', { password })
   },
 
   // Backup & Restore

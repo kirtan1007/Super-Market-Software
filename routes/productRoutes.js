@@ -13,7 +13,7 @@ const {
   importProductsCSV,
   regenerateBarcodes
 } = require('../controllers/productController');
-const { protect, authorize } = require('../middleware/auth');
+const { protect, authorize, restoreTenantContext } = require('../middleware/auth');
 
 // Ensure uploads directory exists
 const uploadsDir = path.join(__dirname, '..', 'public', 'uploads');
@@ -57,10 +57,10 @@ router.get('/:id', getProductById);
 router.get('/barcode/:barcode', getProductByBarcode);
 
 // Owner and Manager modifications
-router.post('/', authorize('owner', 'manager'), upload.single('productImage'), createProduct);
-router.put('/:id', authorize('owner', 'manager'), upload.single('productImage'), updateProduct);
+router.post('/', authorize('owner', 'manager'), upload.single('productImage'), restoreTenantContext, createProduct);
+router.put('/:id', authorize('owner', 'manager'), upload.single('productImage'), restoreTenantContext, updateProduct);
 router.delete('/:id', authorize('owner', 'manager'), deleteProduct);
-router.post('/import-csv', authorize('owner', 'manager'), upload.single('csvFile'), importProductsCSV);
+router.post('/import-csv', authorize('owner', 'manager'), upload.single('csvFile'), restoreTenantContext, importProductsCSV);
 router.post('/regenerate-barcodes', authorize('owner', 'manager'), regenerateBarcodes);
 
 module.exports = router;

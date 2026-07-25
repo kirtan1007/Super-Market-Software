@@ -4,7 +4,7 @@ const multer = require('multer');
 const path = require('path');
 const fs = require('fs');
 const { exportBackup, restoreBackup } = require('../controllers/backupController');
-const { protect, authorize } = require('../middleware/auth');
+const { protect, authorize, restoreTenantContext } = require('../middleware/auth');
 
 const backupsDir = path.join(__dirname, '..', 'backups');
 if (!fs.existsSync(backupsDir)) {
@@ -37,6 +37,6 @@ router.use(protect);
 router.use(authorize('owner'));
 
 router.get('/export', exportBackup);
-router.post('/restore', upload.single('backupFile'), restoreBackup);
+router.post('/restore', upload.single('backupFile'), restoreTenantContext, restoreBackup);
 
 module.exports = router;
