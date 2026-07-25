@@ -263,32 +263,17 @@ async function triggerDatabaseReset() {
 
 // Permanently Delete Owner Account
 async function triggerAccountDeletion() {
-  if (confirm('CRITICAL WARNING: You are about to PERMANENTLY DELETE your account. This will completely drop your database, delete your user credentials, delete all cashier worker profiles, remove all sales logs, and erase your brand files. THIS ACTION IS ENTIRELY IRREVERSIBLE. Proceed to send verification OTP to your email?')) {
+  if (confirm('CRITICAL WARNING: You are about to PERMANENTLY DELETE your account. This will completely drop your database, delete your user credentials, delete all cashier worker profiles, remove all sales logs, and erase your brand files. THIS ACTION IS ENTIRELY IRREVERSIBLE. Are you absolutely sure you want to proceed?')) {
     
+    const password = prompt('To confirm permanent account deletion, please enter your password:');
+    if (!password) {
+      showToast('Account deletion cancelled.', 'info');
+      return;
+    }
+
     try {
-      showToast('Sending OTP to your registered email...', 'info');
-      try {
-        await API.settings.sendDeleteAccountOtp();
-        showToast('OTP sent successfully! Please check your email.', 'success');
-      } catch (emailErr) {
-        console.warn('SMTP sending failed, falling back to database logs:', emailErr.message);
-        showToast('Email SMTP delivery timed out/failed. Retrieving OTP from database fallback (check mail_logs in Atlas)...', 'warning');
-      }
-
-      const password = prompt('STEP 1: Enter your account password:');
-      if (!password) {
-        showToast('Account deletion cancelled.', 'info');
-        return;
-      }
-
-      const otp = prompt('STEP 2: Enter the 6-digit verification OTP (Check email or mail_logs in Atlas):');
-      if (!otp) {
-        showToast('Account deletion cancelled.', 'info');
-        return;
-      }
-
-      showToast('Verifying and deleting account...', 'info');
-      await API.settings.deleteAccount(password, otp);
+      showToast('Verifying password and deleting account...', 'info');
+      await API.settings.deleteAccount(password);
       showToast('Your account and store data have been permanently deleted! Logging out...', 'success');
       
       // Clear local authentication state

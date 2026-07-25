@@ -341,12 +341,9 @@ exports.sendDeleteAccountOtp = async (req, res) => {
 // @access  Private (Owner Only)
 exports.deleteOwnerAccount = async (req, res) => {
   try {
-    const { password, otp } = req.body;
+    const { password } = req.body;
     if (!password) {
       return res.status(400).json({ success: false, message: 'Password is required to confirm account deletion' });
-    }
-    if (!otp) {
-      return res.status(400).json({ success: false, message: 'OTP is required to confirm account deletion' });
     }
 
     // Verify owner's password
@@ -355,34 +352,6 @@ exports.deleteOwnerAccount = async (req, res) => {
     if (!isMatch) {
       return res.status(401).json({ success: false, message: 'Invalid password. Account deletion cancelled.' });
     }
-
-    // Verify OTP
-    const OtpVerification = require('../models/OtpVerification');
-    const otpRec = await OtpVerification.findOne({ email: user.email, purpose: 'Account Deletion', status: 'Pending' }).sort({ createdAt: -1 });
-    if (!otpRec) {
-      return res.status(400).json({ success: false, message: 'No OTP requested for account deletion or OTP already used.' });
-    }
-
-    if (otpRec.expiresAt < Date.now()) {
-      otpRec.status = 'Expired';
-      await otpRec.save();
-      return res.status(400).json({ success: false, message: 'OTP has expired. Please request a new one.' });
-    }
-
-    const bcrypt = require('bcryptjs');
-    const isOtpMatch = await bcrypt.compare(otp, otpRec.otp);
-    if (!isOtpMatch) {
-      otpRec.attempts += 1;
-      if (otpRec.attempts >= 5) {
-        otpRec.status = 'MaxAttemptsExceeded';
-      }
-      await otpRec.save();
-      return res.status(400).json({ success: false, message: 'Invalid OTP. Verification failed.' });
-    }
-
-    // Mark OTP as used
-    otpRec.status = 'Used';
-    await otpRec.save();
 
     const ownerId = req.user._id;
 

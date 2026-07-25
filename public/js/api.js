@@ -222,8 +222,7 @@ const API = {
     uploadUpiQr: (formData) => apiRequest('/settings/upi-qr','POST', formData, true),
     getAuditLogs:()         => apiRequest('/settings/logs'),
     resetData:   (password) => apiRequest('/settings/reset', 'POST', { password }),
-    sendDeleteAccountOtp: () => apiRequest('/settings/delete-account/send-otp', 'POST'),
-    deleteAccount:(password, otp) => apiRequest('/settings/delete-account', 'POST', { password, otp })
+    deleteAccount:(password) => apiRequest('/settings/delete-account', 'POST', { password })
   },
 
   // Backup & Restore
