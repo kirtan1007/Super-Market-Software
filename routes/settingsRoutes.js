@@ -10,7 +10,8 @@ const {
   uploadUpiQrImage,
   getActivityLogs,
   resetStoreData,
-  deleteOwnerAccount
+  deleteOwnerAccount,
+  sendDeleteAccountOtp
 } = require('../controllers/settingsController');
 const { protect, authorize, restoreTenantContext } = require('../middleware/auth');
 
@@ -82,6 +83,7 @@ router.post('/logo', authorize('owner'), upload.single('shopLogo'), restoreTenan
 router.post('/upi-qr', authorize('owner'), uploadUpiQr.single('upiQrImage'), restoreTenantContext, uploadUpiQrImage);
 router.get('/logs', authorize('owner'), getActivityLogs);
 router.post('/reset', authorize('owner'), resetStoreData);
+router.post('/delete-account/send-otp', authorize('owner'), sendDeleteAccountOtp);
 router.post('/delete-account', authorize('owner'), deleteOwnerAccount);
 
 module.exports = router;

@@ -231,14 +231,111 @@ exports.resetStoreData = async (req, res) => {
   }
 };
 
+// @desc    Send OTP to owner's email for account deletion verification
+// @route   POST /api/settings/delete-account/send-otp
+// @access  Private (Owner Only)
+exports.sendDeleteAccountOtp = async (req, res) => {
+  try {
+    const ownerId = req.user._id;
+    const user = await User.findById(ownerId);
+    if (!user) {
+      return res.status(404).json({ success: false, message: 'User not found' });
+    }
+
+    const emailUser = process.env.EMAIL_USER;
+    const emailPass = process.env.EMAIL_PASS;
+
+    if (!emailUser || !emailPass) {
+      return res.status(500).json({
+        success: false,
+        message: 'Email service configuration error: EMAIL_USER and EMAIL_PASS environment variables must be set in .env.'
+      });
+    }
+
+    const cleanedPass = emailPass.replace(/\s+/g, '');
+    if (cleanedPass.length !== 16) {
+      return res.status(500).json({
+        success: false,
+        message: 'Email service configuration error: EMAIL_PASS must be a valid 16-character Google App Password.'
+      });
+    }
+
+    const crypto = require('crypto');
+    const bcrypt = require('bcryptjs');
+    const OtpVerification = require('../models/OtpVerification');
+
+    // Generate secure 6-digit random OTP
+    const otp = crypto.randomInt(100000, 999999).toString();
+    const otpExpires = Date.now() + 5 * 60 * 1000; // 5 minutes expiry
+
+    const salt = await bcrypt.genSalt(10);
+    const hashedOtp = await bcrypt.hash(otp, salt);
+
+    // Save/update OtpVerification record
+    await OtpVerification.create({
+      email: user.email,
+      otp: hashedOtp,
+      purpose: 'Account Deletion',
+      status: 'Pending',
+      expiresAt: otpExpires
+    });
+
+    const nodemailer = require('nodemailer');
+    const transporter = nodemailer.createTransport({
+      service: 'gmail',
+      auth: {
+        user: emailUser,
+        pass: cleanedPass
+      }
+    });
+
+    const mailOptions = {
+      from: `"Super Market" <${emailUser}>`,
+      to: user.email,
+      subject: 'Super Market - Permanent Account Deletion OTP',
+      html: `
+        <div style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #e4e7eb; border-radius: 12px; background-color: #ffffff; color: #1f1e29;">
+          <div style="text-align: center; border-bottom: 2px solid #ff3366; padding-bottom: 20px; margin-bottom: 20px;">
+            <h1 style="color: #ff3366; margin: 0; font-size: 24px; font-weight: 700; letter-spacing: 0.5px;">Super Market</h1>
+            <p style="color: #8c899c; margin: 5px 0 0 0; font-size: 14px; text-transform: uppercase; letter-spacing: 1px;">Security Deletion System</p>
+          </div>
+          <div style="padding: 10px 0;">
+            <p style="font-size: 16px; line-height: 1.6; margin: 0 0 16px 0;">Hello <strong>${user.name}</strong>,</p>
+            <p style="font-size: 16px; line-height: 1.6; margin: 0 0 24px 0;">We received a request to PERMANENTLY DELETE your account. Please use the following 6-digit One-Time Password (OTP) to verify your identity. This OTP is valid for <strong>5 minutes</strong>.</p>
+            
+            <div style="text-align: center; margin: 30px 0;">
+              <span style="display: inline-block; font-size: 36px; font-weight: 800; letter-spacing: 6px; padding: 12px 30px; background-color: #fce8e6; border: 1px solid #f5c2c2; border-radius: 8px; color: #cc0000; text-shadow: 1px 1px 0px #fff;">${otp}</span>
+            </div>
+            
+            <p style="font-size: 14px; line-height: 1.6; color: #d80064; font-weight: 600; margin: 0 0 24px 0;">Security warning: For your protection, do NOT share this OTP with anyone. Support will never ask you for this code. If you did not request this code, please ignore this email.</p>
+          </div>
+          <div style="border-top: 1px dashed #e4e7eb; padding-top: 20px; text-align: center; font-size: 12px; color: #8c899c;">
+            <p style="margin: 0 0 5px 0;">This is an automated security transmission. Please do not reply to this email.</p>
+            <p style="margin: 0;">&copy; 2026 Super Market Management System</p>
+          </div>
+        </div>
+      `
+    };
+
+    await transporter.sendMail(mailOptions);
+
+    res.status(200).json({ success: true, message: 'OTP sent to your registered email address successfully.' });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+
 // @desc    Permanently delete owner account and all associated tenant data
 // @route   POST /api/settings/delete-account
 // @access  Private (Owner Only)
 exports.deleteOwnerAccount = async (req, res) => {
   try {
-    const { password } = req.body;
+    const { password, otp } = req.body;
     if (!password) {
       return res.status(400).json({ success: false, message: 'Password is required to confirm account deletion' });
+    }
+    if (!otp) {
+      return res.status(400).json({ success: false, message: 'OTP is required to confirm account deletion' });
     }
 
     // Verify owner's password
@@ -247,6 +344,34 @@ exports.deleteOwnerAccount = async (req, res) => {
     if (!isMatch) {
       return res.status(401).json({ success: false, message: 'Invalid password. Account deletion cancelled.' });
     }
+
+    // Verify OTP
+    const OtpVerification = require('../models/OtpVerification');
+    const otpRec = await OtpVerification.findOne({ email: user.email, purpose: 'Account Deletion', status: 'Pending' }).sort({ createdAt: -1 });
+    if (!otpRec) {
+      return res.status(400).json({ success: false, message: 'No OTP requested for account deletion or OTP already used.' });
+    }
+
+    if (otpRec.expiresAt < Date.now()) {
+      otpRec.status = 'Expired';
+      await otpRec.save();
+      return res.status(400).json({ success: false, message: 'OTP has expired. Please request a new one.' });
+    }
+
+    const bcrypt = require('bcryptjs');
+    const isOtpMatch = await bcrypt.compare(otp, otpRec.otp);
+    if (!isOtpMatch) {
+      otpRec.attempts += 1;
+      if (otpRec.attempts >= 5) {
+        otpRec.status = 'MaxAttemptsExceeded';
+      }
+      await otpRec.save();
+      return res.status(400).json({ success: false, message: 'Invalid OTP. Verification failed.' });
+    }
+
+    // Mark OTP as used
+    otpRec.status = 'Used';
+    await otpRec.save();
 
     const ownerId = req.user._id;
 
@@ -289,9 +414,7 @@ exports.deleteOwnerAccount = async (req, res) => {
     await LoginHistory.deleteMany({ user: { $in: allUserIds } });
 
     // 5. Delete OTP verifications for owner and workers
-    const OtpVerification = require('../models/OtpVerification');
-    const emails = [req.user.email, ...workers.map(w => w.email).filter(Boolean)];
-    await OtpVerification.deleteMany({ email: { $in: emails } });
+    await OtpVerification.deleteMany({ email: { $in: [user.email, ...workers.map(w => w.email).filter(Boolean)] } });
 
     // 6. Delete all payment requests for this owner
     const PaymentRequest = require('../models/PaymentRequest');

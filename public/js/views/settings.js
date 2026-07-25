@@ -263,15 +263,27 @@ async function triggerDatabaseReset() {
 
 // Permanently Delete Owner Account
 async function triggerAccountDeletion() {
-  if (confirm('CRITICAL WARNING: You are about to PERMANENTLY DELETE your account. This will completely drop your database, delete your user credentials, delete all cashier worker profiles, remove all sales logs, and erase your brand files. THIS ACTION IS ENTIRELY IRREVERSIBLE. Are you absolutely sure you want to proceed?')) {
-    const password = prompt('To confirm permanent account deletion, please enter your password:');
-    if (!password) {
-      showToast('Account deletion cancelled.', 'info');
-      return;
-    }
-
+  if (confirm('CRITICAL WARNING: You are about to PERMANENTLY DELETE your account. This will completely drop your database, delete your user credentials, delete all cashier worker profiles, remove all sales logs, and erase your brand files. THIS ACTION IS ENTIRELY IRREVERSIBLE. Proceed to send verification OTP to your email?')) {
+    
     try {
-      await API.settings.deleteAccount(password);
+      showToast('Sending OTP to your registered email...', 'info');
+      await API.settings.sendDeleteAccountOtp();
+      showToast('OTP sent successfully! Please check your email.', 'success');
+
+      const password = prompt('STEP 1: Enter your account password:');
+      if (!password) {
+        showToast('Account deletion cancelled.', 'info');
+        return;
+      }
+
+      const otp = prompt('STEP 2: Enter the 6-digit verification OTP sent to your email:');
+      if (!otp) {
+        showToast('Account deletion cancelled.', 'info');
+        return;
+      }
+
+      showToast('Verifying and deleting account...', 'info');
+      await API.settings.deleteAccount(password, otp);
       showToast('Your account and store data have been permanently deleted! Logging out...', 'success');
       
       // Clear local authentication state
