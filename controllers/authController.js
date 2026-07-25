@@ -66,13 +66,13 @@ exports.registerOwner = async (req, res) => {
   try {
     const { name, shopName, gstNumber, email, mobile, username, password, shopAddress, securityQuestions } = req.body;
 
-    // Check if username already exists
-    const usernameExists = await User.findOne({ username });
+    // Check if username already exists (excluding soft-deleted users)
+    const usernameExists = await User.findOne({ username, isDeleted: { $ne: true } });
     if (usernameExists) {
       return res.status(400).json({ success: false, message: 'Username is already registered.' });
     }
 
-    // Check if duplicate email, mobile, shopName, or gstNumber
+    // Check if duplicate email, mobile, shopName, or gstNumber (excluding soft-deleted users)
     const orConditions = [
       { email },
       { mobile }
@@ -84,7 +84,7 @@ exports.registerOwner = async (req, res) => {
       orConditions.push({ gstNumber: { $regex: new RegExp(`^${gstNumber.trim()}$`, 'i') } });
     }
 
-    const duplicateExists = await User.findOne({ $or: orConditions });
+    const duplicateExists = await User.findOne({ $or: orConditions, isDeleted: { $ne: true } });
     if (duplicateExists) {
       let msg = 'Email or Mobile is already registered.';
       if (shopName && duplicateExists.shopName && duplicateExists.shopName.toLowerCase() === shopName.trim().toLowerCase()) {
@@ -135,6 +135,23 @@ exports.registerOwner = async (req, res) => {
       trialEndDate,
       subscriptionStatus: 'trial',
       subscriptionEndDate: trialEndDate
+    });
+
+    // Create uploads folders for the new owner
+    const fs = require('fs');
+    const path = require('path');
+    const ownerIdStr = ownerObjId.toString();
+    const directories = [
+      path.join(__dirname, '..', 'public', 'uploads'),
+      path.join(__dirname, '..', 'public', 'uploads', 'owners'),
+      path.join(__dirname, '..', 'public', 'uploads', 'owners', ownerIdStr),
+      path.join(__dirname, '..', 'public', 'uploads', 'owners', ownerIdStr, 'logo'),
+      path.join(__dirname, '..', 'public', 'uploads', 'owners', ownerIdStr, 'qr')
+    ];
+    directories.forEach(dir => {
+      if (!fs.existsSync(dir)) {
+        fs.mkdirSync(dir, { recursive: true });
+      }
     });
 
     // Create isolated settings with the newly registered shop details
@@ -220,6 +237,57 @@ exports.login = async (req, res) => {
     });
 
     // Auto check-in and employee record verification for cashiers/workers
+    if (user.role === 'owner') {
+      const ownerId = user._id;
+      const shopId = user.shopId || ownerId.toString();
+      const tenantId = user.tenantId || ownerId.toString();
+      let databaseName = user.databaseName;
+      if (!databaseName) {
+        const shopSlug = (user.shopName || 'shop')
+          .toLowerCase()
+          .replace(/[^a-z0-9]/g, '_')
+          .replace(/_+/g, '_')
+          .substring(0, 6);
+        databaseName = `tenant_${shopSlug}_${ownerId}`;
+      }
+      
+      // Auto-recreate missing directories
+      const fs = require('fs');
+      const path = require('path');
+      const ownerIdStr = ownerId.toString();
+      const directories = [
+        path.join(__dirname, '..', 'public', 'uploads'),
+        path.join(__dirname, '..', 'public', 'uploads', 'owners'),
+        path.join(__dirname, '..', 'public', 'uploads', 'owners', ownerIdStr),
+        path.join(__dirname, '..', 'public', 'uploads', 'owners', ownerIdStr, 'logo'),
+        path.join(__dirname, '..', 'public', 'uploads', 'owners', ownerIdStr, 'qr')
+      ];
+      directories.forEach(dir => {
+        if (!fs.existsSync(dir)) {
+          fs.mkdirSync(dir, { recursive: true });
+        }
+      });
+
+      // Auto-recreate missing settings
+      const tenantContext = require('../config/tenantContext');
+      await tenantContext.run({ ownerId, shopId, tenantId, databaseName }, async () => {
+        let settings = await Setting.findOne({ owner: ownerId });
+        if (!settings) {
+          await Setting.create({
+            owner: ownerId,
+            ownerId,
+            shopId,
+            tenantId,
+            shopName: user.shopName || 'Super Market',
+            shopAddress: user.shopAddress || '123 Galaxy Way, Sector 5, Super Market City',
+            shopMobile: user.mobile || '9876543210',
+            shopEmail: user.email || 'contact@supermarketsoftware.com',
+            gstNumber: user.gstNumber || '22AAAAA0000A1Z5'
+          });
+        }
+      });
+    }
+
     if (user.role === 'worker') {
       const todayStr = new Date().toISOString().split('T')[0];
       const recordExists = await Attendance.findOne({ employee: user._id, date: todayStr });

@@ -22,7 +22,12 @@ if (!fs.existsSync(uploadsDir)) {
 // Multer Storage Configuration for Logo
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
-    cb(null, uploadsDir);
+    const ownerId = req.user ? (req.user.ownerId || req.user._id).toString() : 'default';
+    const ownerLogoDir = path.join(__dirname, '..', 'public', 'uploads', 'owners', ownerId, 'logo');
+    if (!fs.existsSync(ownerLogoDir)) {
+      fs.mkdirSync(ownerLogoDir, { recursive: true });
+    }
+    cb(null, ownerLogoDir);
   },
   filename: (req, file, cb) => {
     cb(null, `logo-${Date.now()}${path.extname(file.originalname)}`);
@@ -43,7 +48,12 @@ const upload = multer({
 // Multer Storage Configuration for Owner UPI QR
 const upiStorage = multer.diskStorage({
   destination: (req, file, cb) => {
-    cb(null, uploadsDir);
+    const ownerId = req.user ? (req.user.ownerId || req.user._id).toString() : 'default';
+    const ownerQrDir = path.join(__dirname, '..', 'public', 'uploads', 'owners', ownerId, 'qr');
+    if (!fs.existsSync(ownerQrDir)) {
+      fs.mkdirSync(ownerQrDir, { recursive: true });
+    }
+    cb(null, ownerQrDir);
   },
   filename: (req, file, cb) => {
     cb(null, `upi-qr-${Date.now()}${path.extname(file.originalname)}`);

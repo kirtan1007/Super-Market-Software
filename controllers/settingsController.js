@@ -15,8 +15,11 @@ exports.getSettings = async (req, res) => {
     let settings = await Setting.findOne({ owner: ownerId });
     if (!settings) {
       settings = await Setting.create({ 
-        owner: ownerId, 
-        shopName: req.user.role === 'owner' && req.user.shopName ? req.user.shopName : 'Super Market' 
+        owner: ownerId,
+        ownerId: req.ownerId || ownerId,
+        shopId: req.shopId || ownerId.toString(),
+        tenantId: req.tenantId || ownerId.toString(),
+        shopName: req.user.role === 'owner' && req.user.shopName ? req.user.shopName : 'Super Market'
       });
     }
     res.status(200).json({ success: true, data: settings });
@@ -81,7 +84,8 @@ exports.uploadLogo = async (req, res) => {
       }
     }
 
-    settings.shopLogo = `/uploads/${req.file.filename}`;
+    const ownerIdStr = ownerId.toString();
+    settings.shopLogo = `/uploads/owners/${ownerIdStr}/logo/${req.file.filename}`;
     if (!settings.ownerId) settings.ownerId = req.ownerId || ownerId;
     if (!settings.shopId) settings.shopId = req.shopId || ownerId.toString();
     if (!settings.tenantId) settings.tenantId = req.tenantId || ownerId.toString();
@@ -123,7 +127,8 @@ exports.uploadUpiQrImage = async (req, res) => {
       }
     }
 
-    settings.upiQrImage = `/uploads/${req.file.filename}`;
+    const ownerIdStr = ownerId.toString();
+    settings.upiQrImage = `/uploads/owners/${ownerIdStr}/qr/${req.file.filename}`;
     if (!settings.ownerId) settings.ownerId = req.ownerId || ownerId;
     if (!settings.shopId) settings.shopId = req.shopId || ownerId.toString();
     if (!settings.tenantId) settings.tenantId = req.tenantId || ownerId.toString();
