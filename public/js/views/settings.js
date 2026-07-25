@@ -263,19 +263,30 @@ async function triggerDatabaseReset() {
 
 // Permanently Delete Owner Account
 async function triggerAccountDeletion() {
-  if (confirm('CRITICAL WARNING: You are about to PERMANENTLY DELETE your account. This will completely drop your database, delete your user credentials, delete all cashier worker profiles, remove all sales logs, and erase your brand files. THIS ACTION IS ENTIRELY IRREVERSIBLE. Are you absolutely sure you want to proceed?')) {
-    
-    const password = prompt('To confirm permanent account deletion, please enter your password:');
-    if (!password) {
-      showToast('Account deletion cancelled.', 'info');
-      return;
-    }
+  document.getElementById('delete-account-password').value = '';
+  document.getElementById('delete-account-modal').classList.remove('hidden');
+}
 
+function closeDeleteAccountModal() {
+  document.getElementById('delete-account-modal').classList.add('hidden');
+}
+
+async function handleAccountDeletionSubmit() {
+  const passwordInput = document.getElementById('delete-account-password');
+  const password = passwordInput.value;
+  if (!password) {
+    showToast('Please enter your password to confirm.', 'error');
+    return;
+  }
+
+  if (confirm('CRITICAL WARNING: This will permanently delete your account and all associated store data. Are you absolutely sure you want to proceed?')) {
     try {
       showToast('Verifying password and deleting account...', 'info');
       await API.settings.deleteAccount(password);
       showToast('Your account and store data have been permanently deleted! Logging out...', 'success');
       
+      closeDeleteAccountModal();
+
       // Clear local authentication state
       localStorage.removeItem('token');
       sessionStorage.removeItem('token');

@@ -1947,6 +1947,29 @@
     </div>
   </div>
 
+  <!-- ==================== DELETE ACCOUNT MODAL ==================== -->
+  <div id="delete-account-modal" class="modal-overlay hidden">
+    <div class="modal-content glass-card" style="max-width: 480px;">
+      <div class="modal-header">
+        <h3 style="color: var(--neon-pink);"><i class="fa-solid fa-triangle-exclamation"></i> Permanent Account Deletion</h3>
+        <button class="modal-close" onclick="closeDeleteAccountModal()">&times;</button>
+      </div>
+      <div class="modal-body flex-col gap-3">
+        <p style="color: var(--text-secondary); line-height: 1.5; font-size: 0.9rem;">
+          <strong>CRITICAL WARNING:</strong> This action is entirely irreversible. This will drop your database, delete your user credentials, delete cashier worker profiles, remove sales logs, and erase your brand files.
+        </p>
+        <div class="form-group mt-2">
+          <label style="color: var(--neon-pink); display: block; margin-bottom: 5px;"><i class="fa-solid fa-lock"></i> Account Password</label>
+          <input type="password" id="delete-account-password" placeholder="Enter your password to confirm" style="width: 100%;" required>
+        </div>
+        <div class="flex-row gap-2 mt-4" style="justify-content: flex-end;">
+          <button class="btn-secondary" onclick="closeDeleteAccountModal()"><i class="fa-solid fa-circle-xmark"></i> Cancel</button>
+          <button class="btn-danger" onclick="handleAccountDeletionSubmit()"><i class="fa-solid fa-user-slash"></i> Delete Permanently</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <!-- Core JavaScript Router, API layer, Views -->
   <script src="https://cdn.jsdelivr.net/npm/qrcode/build/qrcode.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.5/dist/JsBarcode.all.min.js"></script>
