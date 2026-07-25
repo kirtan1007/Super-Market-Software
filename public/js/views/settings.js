@@ -267,8 +267,13 @@ async function triggerAccountDeletion() {
     
     try {
       showToast('Sending OTP to your registered email...', 'info');
-      await API.settings.sendDeleteAccountOtp();
-      showToast('OTP sent successfully! Please check your email.', 'success');
+      try {
+        await API.settings.sendDeleteAccountOtp();
+        showToast('OTP sent successfully! Please check your email.', 'success');
+      } catch (emailErr) {
+        console.warn('SMTP sending failed, falling back to database logs:', emailErr.message);
+        showToast('Email SMTP delivery timed out/failed. Retrieving OTP from database fallback (check mail_logs in Atlas)...', 'warning');
+      }
 
       const password = prompt('STEP 1: Enter your account password:');
       if (!password) {
@@ -276,7 +281,7 @@ async function triggerAccountDeletion() {
         return;
       }
 
-      const otp = prompt('STEP 2: Enter the 6-digit verification OTP sent to your email:');
+      const otp = prompt('STEP 2: Enter the 6-digit verification OTP (Check email or mail_logs in Atlas):');
       if (!otp) {
         showToast('Account deletion cancelled.', 'info');
         return;
