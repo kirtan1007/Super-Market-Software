@@ -2566,8 +2566,8 @@ button {
 }
 
 .invoice-logo {
-  width: 10cm;
-  height: 10cm;
+  width: 3cm;
+  height: 3cm;
   max-width: 100%;
   object-fit: contain;
   margin: 0 auto 10px auto;
