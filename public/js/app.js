@@ -33,9 +33,9 @@ async function initApp() {
     }
     const loginTitleEl = document.getElementById('login-shop-title');
     if (loginTitleEl) {
-      loginTitleEl.textContent = setupStatus.shopName || 'Super Market';
+      loginTitleEl.textContent = 'Super Market Software';
     }
-    document.title = (setupStatus.shopName || 'Super Market') + ' Management System';
+    document.title = 'Super Market Software';
     const loginLogoImg = document.getElementById('login-logo-img');
     const loginLogoIcon = document.getElementById('login-logo-icon');
     if (loginLogoImg && loginLogoIcon) {
@@ -417,7 +417,7 @@ async function loadShopMetadata() {
     }
 
     // Set Login Page branding dynamically in case of logout
-    setEl('login-shop-title', currentSettings.shopName || 'Super Market');
+    setEl('login-shop-title', 'Super Market Software');
     const loginLogoImg = document.getElementById('login-logo-img');
     const loginLogoIcon = document.getElementById('login-logo-icon');
     if (loginLogoImg && loginLogoIcon) {

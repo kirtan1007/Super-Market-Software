@@ -19,12 +19,16 @@ const {
 const compression = require('compression');
 
 // Initialize database connection
-connectDB().then(() => {
+connectDB().then(async () => {
   const runExpiryCheck = require('./utils/expiryCheckJob');
   runExpiryCheck();
   
   const runSubscriptionCheck = require('./utils/subscriptionCheckJob');
   runSubscriptionCheck();
+
+  // Auto-seed/verify Super Admin on startup
+  const ensureSuperAdmin = require('./utils/ensureSuperAdmin');
+  await ensureSuperAdmin();
 });
 
 const app = express();
